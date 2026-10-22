@@ -1,0 +1,498 @@
+/* Booking Summary Styles — Premium White Theme */
+.booking-summary-root {
+  min-height: 100vh;
+  padding-bottom: 5rem;
+  background-color: #FFFFFF;
+}
+
+.summary-page-container {
+  padding-top: 2rem;
+}
+
+/* Demo Notice Bar */
+.demo-notice-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: rgba(217, 119, 6, 0.08);
+  border: 1px solid rgba(217, 119, 6, 0.25);
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 2rem;
+  font-size: 0.88rem;
+  color: #B45309;
+}
+
+/* Two Column Layout */
+.summary-two-col-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 2.5rem;
+  align-items: flex-start;
+}
+
+.summary-page-heading {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+}
+
+.summary-section-card {
+  background-color: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-card);
+}
+
+/* Movie Preview */
+.sum-movie-preview {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.sum-movie-poster {
+  width: 90px;
+  height: 130px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.sum-movie-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.sum-movie-badges {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 0.25rem;
+}
+
+.sum-movie-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.sum-theatre-text, .sum-datetime-text, .sum-screen-text {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.sum-icon {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.sum-seats-display-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.sum-seats-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.sum-strip-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.sum-seat-tags {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.sum-seat-tag {
+  background-color: var(--primary-light);
+  border: 1px solid rgba(230, 57, 70, 0.3);
+  color: var(--primary);
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.sum-change-seats-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* Contact Details Form */
+.card-section-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.card-section-sub {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.25rem;
+}
+
+.contact-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* Payment Modes */
+.payment-options-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.payment-option-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.payment-option-card:hover {
+  background-color: var(--bg-secondary);
+  border-color: #D1D5DB;
+}
+
+.payment-option-card.selected {
+  background-color: rgba(230, 57, 70, 0.05);
+  border-color: var(--primary);
+}
+
+.payment-radio {
+  accent-color: var(--primary);
+  width: 18px;
+  height: 18px;
+}
+
+.payment-opt-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.opt-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.opt-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* Right Pane: Pricing Card */
+.pricing-summary-card {
+  position: sticky;
+  top: calc(var(--nav-height) + 20px);
+  background-color: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-card);
+}
+
+.pricing-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 1.25rem;
+}
+
+.promo-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.promo-apply-btn {
+  padding: 0 1.25rem;
+}
+
+.promo-hint-text {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-top: 0.45rem;
+}
+
+.applied-promo-tag {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--primary-light);
+  border: 1px solid rgba(230, 57, 70, 0.3);
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--radius-md);
+}
+
+.applied-promo-code {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--primary);
+  display: block;
+}
+
+.applied-promo-desc {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.promo-remove-btn {
+  color: var(--text-secondary);
+  padding: 4px;
+}
+
+.promo-remove-btn:hover {
+  color: #DC2626;
+}
+
+/* Line Items */
+.line-items-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.line-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.line-value {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.discount-item .line-label, .discount-item .line-value {
+  color: #059669;
+}
+
+.total-item {
+  padding-top: 0.5rem;
+}
+
+.total-item .total-label {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.total-item .total-value {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--primary);
+}
+
+.checkout-pay-btn {
+  width: 100%;
+}
+
+.safe-security-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-top: 1rem;
+}
+
+/* Confirmation Success Modal */
+.confirm-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 2500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.confirm-modal-content {
+  background-color: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  max-width: 580px;
+  width: 100%;
+  padding: 2.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+.confirm-check-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: rgba(5, 150, 105, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.25rem;
+}
+
+.confirm-title {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+}
+
+.confirm-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.75rem;
+}
+
+/* Ticket Visual Card */
+.ticket-visual-card {
+  background: #F8F9FC;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  text-align: left;
+  margin-bottom: 1.75rem;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.ticket-visual-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed var(--border);
+  margin-bottom: 1rem;
+}
+
+.ref-label {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+}
+
+.ref-id {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.ticket-movie-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.2rem;
+}
+
+.ticket-theatre-name {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.2rem;
+}
+
+.ticket-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  font-size: 0.85rem;
+}
+
+.td-label {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+.td-val {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.td-val.highlight {
+  color: var(--primary);
+  font-weight: 800;
+}
+
+.ticket-qr-section {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ticket-qr-img {
+  width: 130px;
+  height: 130px;
+  background: #FFFFFF;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.qr-scan-hint {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.confirm-modal-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.confirm-modal-actions .btn {
+  flex: 1;
+}
+
+@media (max-width: 992px) {
+  .summary-two-col-layout {
+    grid-template-columns: 1fr;
+  }
+  .contact-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .confirm-modal-actions {
+    flex-direction: column;
+  }
+}

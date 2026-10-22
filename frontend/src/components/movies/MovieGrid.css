@@ -1,0 +1,64 @@
+/* Movie Grid Styles — Premium White Theme */
+.movie-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1.75rem;
+  width: 100%;
+}
+
+.movie-grid-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 2rem;
+  text-align: center;
+  background-color: #FFFFFF;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-xl);
+  margin: 1.5rem 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.empty-icon-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--border);
+}
+
+.empty-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.empty-desc {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  max-width: 420px;
+  margin-bottom: 1.5rem;
+}
+
+.empty-reset-btn {
+  padding: 0.65rem 1.4rem;
+}
+
+@media (max-width: 768px) {
+  .movie-grid-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .movie-grid-container {
+    grid-template-columns: 1fr;
+  }
+}

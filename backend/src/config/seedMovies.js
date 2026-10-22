@@ -1,0 +1,417 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
+import mongoose from 'mongoose';
+import Movie from '../models/Movie.js';
+
+export const SAMPLE_MOVIES = [
+  // --- BOLLYWOOD MOVIES (In strictly curated order) ---
+  {
+    title: 'Dhurandhar',
+    slug: 'dhurandhar',
+    description: 'An elite undercover Indian intelligence operative leads a perilous covert operation into hostile international territory to dismantle a clandestine syndicate threatening national security.',
+    poster: '/images/bollywood/dhurandhar.png',
+    backdrop: '/images/bollywood/dhurandhar.png',
+    genres: ['Action', 'Thriller', 'Crime'],
+    languages: ['Hindi'],
+    releaseDate: new Date('2025-12-25'),
+    duration: '2h 38m',
+    durationMinutes: 158,
+    director: 'Aditya Dhar',
+    certification: 'U/A 16+',
+    trailerUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    rating: 8.9,
+    voteCount: 'Anticipated',
+    formats: ['IMAX Laser', '2D', '4DX'],
+    industry: 'bollywood',
+    isHeroFeatured: true,
+    heroTag: 'HIGH-OCTANE SPY THRILLER',
+    priceStartingAt: 280,
+    tags: ['bollywood', 'trending', 'coming-soon', 'hidden-gems'],
+    status: 'published',
+    isPublished: true,
+    cast: [
+      { name: 'Ranveer Singh', role: 'Major Kabir', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80' },
+      { name: 'Sanjay Dutt', role: 'Bhairav', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=80' },
+      { name: 'R. Madhavan', role: 'Intelligence Chief', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80' },
+      { name: 'Akshaye Khanna', role: 'DCP Rathore', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80' },
+    ],
+  },
+  {
+    title: 'Jawan',
+    slug: 'jawan',
+    description: 'A driven prison warden and his squad of brave inmates initiate bold vigilante strikes to correct societal injustice, confronting a corrupt arms titan while reclaiming his family heritage.',
+    poster: '/images/bollywood/jawan.jpg',
+    backdrop: '/images/bollywood/jawan.jpg',
+    genres: ['Action', 'Thriller', 'Drama'],
+    languages: ['Hindi', 'Tamil', 'Telugu'],
+    releaseDate: new Date('2023-09-07'),
+    duration: '2h 49m',
+    durationMinutes: 169,
+    director: 'Atlee',
+    certification: 'U/A 16+',
+    trailerUrl: 'https://www.youtube.com/watch?v=MWOlnZSnXWE',
+    rating: 8.4,
+    voteCount: '380K+',
+    formats: ['IMAX Laser', '4DX', '2D'],
+    industry: 'bollywood',
+    isHeroFeatured: true,
+    heroTag: 'RECORD-BREAKING MEGA BLOCKBUSTER',
+    priceStartingAt: 270,
+    tags: ['bollywood', 'trending', 'popular', 'now-showing', 'new-releases', 'audience-favourite'],
+    status: 'published',
+    isPublished: true,
+    cast: [
+      { name: 'Shah Rukh Khan', role: 'Vikram Rathore / Azad', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80' },
+      { name: 'Nayanthara', role: 'Narmada Rai', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80' },
+      { name: 'Vijay Sethupathi', role: 'Kaleeswaran', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=80' },
+      { name: 'Deepika Padukone', role: 'Aishwarya Rathore', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80' },
+    ],
+  },
+  {
+    title: 'Stree 2',
+    slug: 'stree-2',
+    description: 'After the events of Stree, the town of Chanderi is terrorized by Sarkata. Vicky, Bittu, Janna and Rudra join forces with the mysterious Stree to defeat the malevolent entity.',
+    poster: '/images/bollywood/stree2.jpg',
+    backdrop: '/images/bollywood/stree2.jpg',
+    genres: ['Comedy', 'Horror'],
+    languages: ['Hindi'],
+    releaseDate: new Date('2024-08-15'),
+    duration: '2h 27m',
+    durationMinutes: 147,
+    director: 'Amar Kaushik',
+    certification: 'U/A 16+',
+    trailerUrl: 'https://www.youtube.com/watch?v=KVnhefZ55i8',
+    rating: 8.3,
+    voteCount: '210K+',
+    formats: ['2D', 'IMAX Laser'],
+    industry: 'bollywood',
+    isHeroFeatured: true,
+    heroTag: 'ALL-TIME BLOCKBUSTER',
+    priceStartingAt: 250,
+    tags: ['bollywood', 'trending', 'popular', 'now-showing', 'new-releases', 'audience-favourite'],
+    status: 'published',
+    isPublished: true,
+    cast: [
+      { name: 'Rajkummar Rao', role: 'Vicky', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80' },
+      { name: 'Shraddha Kapoor', role: 'She', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80' },
+      { name: 'Pankaj Tripathi', role: 'Rudra', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=80' },
+    ],
+  },
+  {
+    title: 'Chhaava',
+    slug: 'chhaava',
+    description: 'The valorous historical saga of Chhatrapati Sambhaji Maharaj, the fearless second ruler of the Maratha Empire, defending Swarajya against the overwhelming Mughal armada.',
+    poster: '/images/bollywood/chhaava.jpg',
+    backdrop: '/images/bollywood/chhaava.jpg',
+    genres: ['Action', 'Drama', 'History'],
+    languages: ['Hindi', 'Marathi'],
+    releaseDate: new Date('2025-02-14'),
+    duration: '2h 45m',
+    durationMinutes: 165,
+    director: 'Laxman Utekar',
+    certification: 'U/A 16+',
+    trailerUrl: 'https://www.youtube.com/watch?v=gSg8pQ2n4pY',
+    rating: 8.8,
+    voteCount: 'Anticipated',
+    formats: ['IMAX Laser', '2D', '4DX'],
+    industry: 'bollywood',
+    isHeroFeatured: false,
+    heroTag: 'EPIC HISTORICAL MASTERPIECE',
+    priceStartingAt: 260,
+    tags: ['bollywood', 'popular', 'coming-soon'],
+    status: 'published',
+    isPublished: true,
+    cast: [
+      { name: 'Vicky Kaushal', role: 'Chhatrapati Sambhaji Maharaj', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80' },
+      { name: 'Rashmika Mandanna', role: 'Yesubai Bhonsale', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80' },
+      { name: 'Akshaye Khanna', role: 'Emperor Aurangzeb', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=80' },
+    ],
+  },
+  {
+    title: 'Saiyaara',
+    slug: 'saiyaara',
+    description: 'A soulful, deeply moving musical romance tracing the bittersweet voyage of two passionate artists whose profound connection defies distance, heartbreak, and societal expectations.',
+    poster: '/images/bollywood/saiyaara.png',
+    backdrop: '/images/bollywood/saiyaara.png',
+    genres: ['Romance', 'Drama', 'Musical'],
+    languages: ['Hindi'],
+    releaseDate: new Date('2025-11-14'),
+    duration: '2h 18m',
+    durationMinutes: 138,
+    director: 'Mohit Suri',
+    certification: 'U/A 13+',
+    trailerUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    rating: 8.2,
+    voteCount: '110K+',
+    formats: ['2D'],
+    industry: 'bollywood',
+    isHeroFeatured: false,
+    heroTag: 'SOULFUL MUSICAL ODYSSEY',
+    priceStartingAt: 220,
+    tags: ['bollywood', 'audience-favourite', 'coming-soon', 'hidden-gems'],
+    status: 'published',
+    isPublished: true,
+    cast: [
+      { name: 'Ahaan Panday', role: 'Aryan', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80' },
+      { name: 'Diana Penty', role: 'Tara', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80' },
+    ],
+  },
+  {
+    title: 'Animal',
+    slug: 'animal',
+    description: 'A fraught father-son bond spirals into an unrelenting, blood-soaked war when an industrialist is targeted in an assassination attempt, compelling his ferocious son into dark vengeance.',
+    poster: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=700&q=80',
+    backdrop: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1600&q=80',
+    genres: ['Action', 'Crime', 'Drama'],
+    languages: ['Hindi', 'Telugu'],
+    releaseDate: new Date('2023-12-01'),
+    duration: '3h 24m',
+    durationMinutes: 204,
+    director: 'Sandeep Reddy Vanga',
+    certification: 'A',
+    trailerUrl: 'https://www.youtube.com/watch?v=Dydmpfo68DA',
+    rating: 8.1,
+    voteCount: '310K+',
+    formats: ['2D', 'IMAX Laser'],
+    industry: 'bollywood',
+    isHeroFeatured: false,
+    heroTag: 'UNRELENTING ACTION DRAMA',
+    priceStartingAt: 260,
+    tags: ['bollywood', 'popular', 'now-showing', 'new-releases', 'audience-favourite'],
+    status: 'published',
+    isPublished: true,
+    cast: [
+      { name: 'Ranbir Kapoor', role: 'Ranvijay Singh', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80' },
+      { name: 'Anil Kapoor', role: 'Balbir Singh', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=80' },
+      { name: 'Bobby Deol', role: 'Abrar Haque', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80' },
+      { name: 'Rashmika Mandanna', role: 'Geetanjali', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80' },
+    ],
+  },
+
+  // --- HOLLYWOOD MOVIES ---
+  {
+    title: 'Avatar: Fire and Ash',
+    slug: 'avatar-fire-and-ash',
+    description: 'The Sully family faces new peril as they encounter the Ash People, a volcanic clan of Na\'vi with aggressive instincts on Pandora.',
+    poster: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=700&q=80',
+    backdrop: 'https://images.unsplash.com/photo-1507499739999-097706ad8914?auto=format&fit=crop&w=1600&q=80',
+    genres: ['Sci-Fi', 'Adventure', 'Action'],
+    languages: ['English', 'Hindi', 'Tamil', 'Telugu'],
+    releaseDate: new Date('2025-12-19'),
+    duration: '3h 15m',
+    durationMinutes: 195,
+    director: 'James Cameron',
+    certification: 'U/A 13+',
+    trailerUrl: 'https://www.youtube.com/watch?v=d9MyW72ELq0',
+    rating: 9.2,
+    voteCount: 'Anticipated',
+    formats: ['IMAX 3D', '4DX', '3D'],
+    industry: 'hollywood',
+    isHeroFeatured: false,
+    heroTag: 'COMING SOON TO CINEMAS',
+    priceStartingAt: 350,
+    tags: ['hollywood', 'trending', 'coming-soon'],
+    status: 'published',
+    isPublished: true,
+    cast: [
+      { name: 'Sam Worthington', role: 'Jake Sully', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80' },
+      { name: 'Zoe Saldana', role: 'Neytiri', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80' },
+    ],
+  },
+  {
+    title: 'Interstellar',
+    slug: 'interstellar',
+    description: 'When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot, Joseph Cooper, is tasked to pilot a spacecraft along with a team of researchers through a mysterious wormhole near Saturn.',
+    poster: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=700&q=80',
+    backdrop: 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=1600&q=80',
+    genres: ['Sci-Fi', 'Drama', 'Adventure'],
+    languages: ['English', 'Hindi'],
+    releaseDate: new Date('2014-11-07'),
+    duration: '2h 49m',
+    durationMinutes: 169,
+    director: 'Christopher Nolan',
+    certification: 'U/A 13+',
+    trailerUrl: 'https://www.youtube.com/watch?v=zSWdZVtXT7E',
+    rating: 8.7,
+    voteCount: '980K+',
+    formats: ['IMAX Laser', '2D'],
+    industry: 'hollywood',
+    isHeroFeatured: true,
+    heroTag: 'SPECIAL IMAX RE-RELEASE',
+    priceStartingAt: 350,
+    tags: ['hollywood', 'popular', 'audience-favourite', 'now-showing'],
+    status: 'published',
+    isPublished: true,
+    cast: [
+      { name: 'Matthew McConaughey', role: 'Cooper', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80' },
+      { name: 'Anne Hathaway', role: 'Brand', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80' },
+    ],
+  },
+  {
+    title: 'Inception',
+    slug: 'inception',
+    description: 'Dom Cobb is a skilled thief who steals corporate secrets through dream-sharing technology. He is offered a chance to regain his old life as payment for a nearly impossible task: inception.',
+    poster: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=700&q=80',
+    backdrop: 'https://images.unsplash.com/photo-1507499739999-097706ad8914?auto=format&fit=crop&w=1600&q=80',
+    genres: ['Sci-Fi', 'Action', 'Thriller'],
+    languages: ['English', 'Hindi'],
+    releaseDate: new Date('2010-07-16'),
+    duration: '2h 28m',
+    durationMinutes: 148,
+    director: 'Christopher Nolan',
+    certification: 'U/A 13+',
+    trailerUrl: 'https://www.youtube.com/watch?v=YoHD9XEInc0',
+    rating: 8.8,
+    voteCount: '1.2M+',
+    formats: ['IMAX 2D', '2D'],
+    industry: 'hollywood',
+    isHeroFeatured: false,
+    heroTag: 'MIND-BENDING SCI-FI THRILLER',
+    priceStartingAt: 300,
+    tags: ['hollywood', 'popular', 'audience-favourite', 'now-showing'],
+    status: 'published',
+    isPublished: true,
+    cast: [
+      { name: 'Leonardo DiCaprio', role: 'Dom Cobb', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80' },
+      { name: 'Joseph Gordon-Levitt', role: 'Arthur', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80' },
+    ],
+  },
+  {
+    title: 'Avengers: Endgame',
+    slug: 'avengers-endgame',
+    description: 'After the devastation wrought by Thanos, the remaining Avengers assemble for one final stand across time to restore what was lost and safeguard the universe.',
+    poster: 'https://images.unsplash.com/photo-1635805737707-575885ab0820?auto=format&fit=crop&w=700&q=80',
+    backdrop: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1600&q=80',
+    genres: ['Action', 'Sci-Fi', 'Adventure'],
+    languages: ['English', 'Hindi', 'Tamil', 'Telugu'],
+    releaseDate: new Date('2019-04-26'),
+    duration: '3h 01m',
+    durationMinutes: 181,
+    director: 'Anthony Russo, Joe Russo',
+    certification: 'U/A 13+',
+    trailerUrl: 'https://www.youtube.com/watch?v=TcMBFSGVi1c',
+    rating: 8.9,
+    voteCount: '1.5M+',
+    formats: ['IMAX 3D', '4DX', '3D', '2D'],
+    industry: 'hollywood',
+    isHeroFeatured: true,
+    heroTag: 'THE ULTIMATE MARVEL FINALE',
+    priceStartingAt: 320,
+    tags: ['hollywood', 'trending', 'popular', 'now-showing', 'audience-favourite'],
+    status: 'published',
+    isPublished: true,
+    cast: [
+      { name: 'Robert Downey Jr.', role: 'Tony Stark / Iron Man', avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&q=80' },
+      { name: 'Chris Evans', role: 'Steve Rogers / Captain America', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80' },
+      { name: 'Chris Hemsworth', role: 'Thor', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=80' },
+    ],
+  },
+  {
+    title: 'The Batman',
+    slug: 'the-batman',
+    description: 'In his second year of fighting crime, Batman uncovers corruption in Gotham City that connects to his own family while facing a sadistic serial killer known as the Riddler.',
+    poster: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=700&q=80',
+    backdrop: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1600&q=80',
+    genres: ['Action', 'Crime', 'Drama', 'Mystery'],
+    languages: ['English', 'Hindi'],
+    releaseDate: new Date('2022-03-04'),
+    duration: '2h 56m',
+    durationMinutes: 176,
+    director: 'Matt Reeves',
+    certification: 'U/A 16+',
+    trailerUrl: 'https://www.youtube.com/watch?v=mqqft2x_Aa4',
+    rating: 8.4,
+    voteCount: '670K+',
+    formats: ['IMAX Laser', '2D'],
+    industry: 'hollywood',
+    isHeroFeatured: false,
+    heroTag: 'DARK NEO-NOIR DETECTIVE MASTERPIECE',
+    priceStartingAt: 280,
+    tags: ['hollywood', 'popular', 'now-showing', 'audience-favourite', 'hidden-gems'],
+    status: 'published',
+    isPublished: true,
+    cast: [
+      { name: 'Robert Pattinson', role: 'Bruce Wayne / Batman', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80' },
+      { name: 'Zoë Kravitz', role: 'Selina Kyle / Catwoman', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80' },
+    ],
+  },
+  {
+    title: 'Dune: Part Two',
+    slug: 'dune-part-two',
+    description: 'Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family. Facing a choice between the love of his life and the fate of the known universe, he endeavors to prevent a terrible future only he can foresee.',
+    poster: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=700&q=80',
+    backdrop: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=80',
+    genres: ['Sci-Fi', 'Action', 'Adventure'],
+    languages: ['English', 'Hindi'],
+    releaseDate: new Date('2024-03-01'),
+    duration: '2h 46m',
+    durationMinutes: 166,
+    director: 'Denis Villeneuve',
+    certification: 'U/A 16+',
+    trailerUrl: 'https://www.youtube.com/watch?v=Way9Dexny3w',
+    rating: 8.8,
+    voteCount: '480K+',
+    formats: ['IMAX 3D', '4DX', '2D'],
+    industry: 'hollywood',
+    isHeroFeatured: true,
+    heroTag: 'TRENDING #1 WORLDWIDE',
+    priceStartingAt: 320,
+    tags: ['hollywood', 'trending', 'popular', 'now-showing', 'new-releases', 'audience-favourite'],
+    status: 'published',
+    isPublished: true,
+    cast: [
+      { name: 'Timothée Chalamet', role: 'Paul Atreides', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80' },
+      { name: 'Zendaya', role: 'Chani', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80' },
+    ],
+  },
+];
+
+/**
+ * Seed sample movies into MongoDB if collection is empty
+ */
+export const seedMoviesIfEmpty = async () => {
+  try {
+    const count = await Movie.countDocuments();
+    if (count === 0) {
+      console.log('[Seed] Seeding initial movie catalogue into MongoDB...');
+      await Movie.insertMany(SAMPLE_MOVIES);
+      console.log(`[Seed] Successfully seeded ${SAMPLE_MOVIES.length} movies.`);
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error(`[Seed] Error seeding movies: ${error.message}`);
+    return false;
+  }
+};
+
+// Standalone execution: node src/config/seedMovies.js
+if (process.argv[1] && process.argv[1].endsWith('seedMovies.js')) {
+  (async () => {
+    try {
+      let mongoURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/cinebook';
+      if (mongoURI.includes('<db_password>') || mongoURI.includes('<password>')) {
+        mongoURI = 'mongodb://127.0.0.1:27017/cinebook';
+      }
+      await mongoose.connect(mongoURI);
+      console.log('Connected to MongoDB for standalone seeding.');
+      
+      const count = await Movie.countDocuments();
+      console.log(`Existing movies in database: ${count}`);
+
+      // Upsert movies by slug so seed is idempotent and safe
+      for (const m of SAMPLE_MOVIES) {
+        await Movie.findOneAndUpdate({ slug: m.slug }, m, { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true });
+      }
+
+      const total = await Movie.countDocuments();
+      console.log(`✅ Movie catalogue seeded/synchronized. Total movies in DB: ${total}`);
+      await mongoose.disconnect();
+      process.exit(0);
+    } catch (err) {
+      console.error('Seed execution failed:', err);
+      process.exit(1);
+    }
+  })();
+}

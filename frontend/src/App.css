@@ -1,0 +1,8 @@
+/* App Layout General Styles */
+.app-layout-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}

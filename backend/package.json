@@ -1,0 +1,35 @@
+{
+  "name": "cinebook-backend",
+  "version": "1.0.0",
+  "description": "Backend API service for CineBook movie ticket booking platform",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "seed": "node src/config/seedMovies.js && node src/config/seedTheatresAndShows.js",
+    "seed:movies": "node src/config/seedMovies.js",
+    "seed:theatres": "node src/config/seedTheatresAndShows.js",
+    "test": "node test-movies-api.js && node test-theatres-showtimes-api.js && node test-bookings-api.js && node test-payments-admin-api.js && node test-frontend-integration.js",
+    "test:movies": "node test-movies-api.js",
+    "test:theatres": "node test-theatres-showtimes-api.js",
+    "test:bookings": "node test-bookings-api.js",
+    "test:payments-admin": "node test-payments-admin-api.js",
+    "test:integration": "node test-frontend-integration.js",
+    "seed:users": "node src/config/seedUsers.js",
+    "admin:bootstrap": "node src/scripts/bootstrapAdmin.js"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.8",
+    "express": "^5.3.0",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.11.2",
+    "razorpay": "^2.9.8"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

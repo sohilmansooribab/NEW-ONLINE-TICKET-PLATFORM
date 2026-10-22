@@ -1,0 +1,141 @@
+/* Movie Carousel Styles — Premium White Theme */
+.carousel-section-root {
+  padding: 3.25rem 0;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.carousel-section-root.bg-white-surface {
+  background-color: #FFFFFF;
+}
+
+.carousel-section-root.bg-light-surface {
+  background-color: var(--bg-secondary);
+}
+
+.carousel-section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.carousel-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.carousel-tagline {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.carousel-tag-icon {
+  color: var(--primary);
+}
+
+.carousel-title {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.carousel-controls-group {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.carousel-view-all-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary);
+  transition: all var(--transition-fast);
+}
+
+.carousel-view-all-link:hover {
+  color: var(--primary-hover);
+  transform: translateX(2px);
+}
+
+.carousel-nav-arrows {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.carousel-nav-arrow {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.carousel-nav-arrow:hover:not(.disabled) {
+  border-color: var(--primary);
+  color: var(--primary);
+  background-color: var(--primary-light);
+  transform: scale(1.06);
+}
+
+.carousel-nav-arrow.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Track Wrapper & Smooth Scroll */
+.carousel-track-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.carousel-scroll-track {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 0.5rem 0.25rem 1.25rem;
+  scrollbar-width: none; /* Hide default scrollbar for sleek look */
+  -ms-overflow-style: none;
+}
+
+.carousel-scroll-track::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-card-wrapper {
+  width: 220px;
+  flex-shrink: 0;
+  transition: transform var(--transition-normal);
+}
+
+@media (max-width: 768px) {
+  .carousel-card-wrapper {
+    width: 175px;
+  }
+  .carousel-title {
+    font-size: 1.5rem;
+  }
+}

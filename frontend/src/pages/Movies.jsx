@@ -3,7 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import { 
   X, 
   Film,
-  Globe
+  Globe,
+  ArrowUpDown
 } from 'lucide-react';
 import MovieGrid from '../components/movies/MovieGrid';
 import { MOVIES, BOLLYWOOD_MOVIES, HOLLYWOOD_MOVIES, GENRES, FORMATS, LANGUAGES } from '../data/mockData';

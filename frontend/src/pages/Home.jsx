@@ -68,13 +68,24 @@ const Home = () => {
     ? liveMovies.filter(m => m.industry === 'hollywood') 
     : HOLLYWOOD_MOVIES;
 
-  // Filter movie sections based on tags
-  const trendingNow = baseMovies.filter(m => m.tags?.includes('trending'));
-  const popularThisWeek = baseMovies.filter(m => m.tags?.includes('popular'));
-  const newReleases = baseMovies.filter(m => m.tags?.includes('new-releases') || m.status === 'released');
-  const comingSoon = baseMovies.filter(m => m.tags?.includes('coming-soon') || m.status === 'upcoming');
-  const audienceFavourites = baseMovies.filter(m => m.tags?.includes('audience-favourite') || m.rating >= 8.5);
-  const hiddenGems = baseMovies.filter(m => m.tags?.includes('hidden-gems'));
+  // Filter movie sections based on tags with fallback to ensure rich display
+  const trendingFiltered = baseMovies.filter(m => m.tags?.includes('trending'));
+  const trendingNow = trendingFiltered.length > 0 ? trendingFiltered : MOVIES.filter(m => m.tags?.includes('trending'));
+
+  const popularFiltered = baseMovies.filter(m => m.tags?.includes('popular'));
+  const popularThisWeek = popularFiltered.length > 0 ? popularFiltered : MOVIES.filter(m => m.tags?.includes('popular'));
+
+  const newReleasesFiltered = baseMovies.filter(m => m.tags?.includes('new-releases') || m.status === 'released');
+  const newReleases = newReleasesFiltered.length > 0 ? newReleasesFiltered : MOVIES.filter(m => m.tags?.includes('new-releases'));
+
+  const comingSoonFiltered = baseMovies.filter(m => m.tags?.includes('coming-soon') || m.status === 'upcoming');
+  const comingSoon = comingSoonFiltered.length > 0 ? comingSoonFiltered : MOVIES.filter(m => m.tags?.includes('coming-soon'));
+
+  const audienceFiltered = baseMovies.filter(m => m.tags?.includes('audience-favourite') || (m.rating && m.rating >= 8.5));
+  const audienceFavourites = audienceFiltered.length > 0 ? audienceFiltered : MOVIES.filter(m => m.tags?.includes('audience-favourite'));
+
+  const gemsFiltered = baseMovies.filter(m => m.tags?.includes('hidden-gems'));
+  const hiddenGems = gemsFiltered.length > 0 ? gemsFiltered : MOVIES.filter(m => m.tags?.includes('hidden-gems'));
 
   // City display
   const cityName = CITIES.find(c => c.id === selectedCity)?.name || 'Delhi-NCR';
@@ -278,7 +289,7 @@ const Home = () => {
                 className={`home-category-tab ${activeCategory === 'all' ? 'active' : ''}`}
                 onClick={() => setActiveCategory('all')}
               >
-                All Movies ({MOVIES.length})
+                All Movies ({baseMovies.length})
               </button>
               <button
                 type="button"
@@ -304,7 +315,7 @@ const Home = () => {
 
           <div className="grid-movies">
             {filteredDiscovery.slice(0, 8).map(movie => (
-              <div key={movie.id}>
+              <div key={movie.slug || movie._id || movie.id}>
                 <MovieCard movie={movie} />
               </div>
             ))}
@@ -336,47 +347,50 @@ const Home = () => {
           </div>
 
           <div className="theatres-showcase-grid">
-            {THEATRES.map(th => (
-              <div key={th.id} className="theatre-showcase-card">
-                <div className="theatre-card-top">
-                  <div className="theatre-name-wrap">
-                    <h3 className="theatre-name">{th.name}</h3>
-                    <p className="theatre-location">{th.location}</p>
-                  </div>
-                  <span className="badge badge-dark theatre-dist">{th.distance}</span>
-                </div>
-
-                <div className="theatre-amenities">
-                  {th.amenities.map((amenity, i) => (
-                    <span key={i} className="badge badge-dark amenity-pill">
-                      {amenity}
-                    </span>
-                  ))}
-                </div>
-
-                <div className="theatre-screens-summary">
-                  <div className="screen-tag-item">
-                    <Layers size={14} color="#E63946" />
-                    <span>{th.screens.length} Screens Active</span>
-                  </div>
-                  {th.cancellationAvailable && (
-                    <div className="screen-tag-item">
-                      <ShieldCheck size={14} color="#059669" />
-                      <span>Free Cancellation</span>
+            {THEATRES.map(th => {
+              const defaultMovieTarget = baseMovies[0]?.slug || baseMovies[0]?._id || baseMovies[0]?.id || MOVIES[0].id;
+              return (
+                <div key={th.id} className="theatre-showcase-card">
+                  <div className="theatre-card-top">
+                    <div className="theatre-name-wrap">
+                      <h3 className="theatre-name">{th.name}</h3>
+                      <p className="theatre-location">{th.location}</p>
                     </div>
-                  )}
-                </div>
+                    <span className="badge badge-dark theatre-dist">{th.distance}</span>
+                  </div>
 
-                <button 
-                  type="button" 
-                  className="btn btn-secondary btn-sm theatre-book-btn"
-                  onClick={() => navigate(`/theatres/${MOVIES[0].id}`)}
-                >
-                  <span>View Showtimes</span>
-                  <ArrowRight size={14} />
-                </button>
-              </div>
-            ))}
+                  <div className="theatre-amenities">
+                    {th.amenities.map((amenity, i) => (
+                      <span key={i} className="badge badge-dark amenity-pill">
+                        {amenity}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="theatre-screens-summary">
+                    <div className="screen-tag-item">
+                      <Layers size={14} color="#E63946" />
+                      <span>{th.screens.length} Screens Active</span>
+                    </div>
+                    {th.cancellationAvailable && (
+                      <div className="screen-tag-item">
+                        <ShieldCheck size={14} color="#059669" />
+                        <span>Free Cancellation</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <button 
+                    type="button" 
+                    className="btn btn-secondary btn-sm theatre-book-btn"
+                    onClick={() => navigate(`/theatres/${defaultMovieTarget}`)}
+                  >
+                    <span>View Showtimes</span>
+                    <ArrowRight size={14} />
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

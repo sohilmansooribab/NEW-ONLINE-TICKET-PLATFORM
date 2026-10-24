@@ -302,27 +302,27 @@ const BookingSummary = () => {
             <div className="summary-section-card">
               <div className="sum-movie-preview">
                 <img 
-                  src={activeBooking.movie?.poster} 
-                  alt={activeBooking.movie?.title} 
+                  src={activeBooking.movie?.poster || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80'} 
+                  alt={activeBooking.movie?.title || 'Movie'} 
                   className="sum-movie-poster"
                 />
                 <div className="sum-movie-details">
                   <div className="sum-movie-badges">
                     <span className="badge badge-primary">{activeBooking.movie?.certificate || activeBooking.movie?.certification || 'U/A'}</span>
-                    <span className="badge badge-dark">{activeBooking.format}</span>
+                    <span className="badge badge-dark">{activeBooking.format || 'IMAX 3D'}</span>
                     <span className="badge badge-dark">{activeBooking.movie?.languages?.[0] || 'Hindi'}</span>
                   </div>
-                  <h2 className="sum-movie-title">{activeBooking.movie?.title}</h2>
+                  <h2 className="sum-movie-title">{activeBooking.movie?.title || 'Dune: Part Two'}</h2>
                   <p className="sum-theatre-text">
                     <MapPin size={14} className="sum-icon" />
-                    <strong>{activeBooking.theatre?.name}</strong> • {activeBooking.theatre?.location}
+                    <strong>{activeBooking.theatre?.name || 'PVR Cinemas'}</strong> • {activeBooking.theatre?.location || 'Central Multiplex'}
                   </p>
                   <p className="sum-datetime-text">
                     <Calendar size={14} className="sum-icon" />
-                    {activeBooking.date} • <Clock size={14} className="sum-icon" /> {activeBooking.time}
+                    {activeBooking.date || 'Today'} • <Clock size={14} className="sum-icon" /> {activeBooking.time || '06:15 PM'}
                   </p>
                   <p className="sum-screen-text">
-                    Auditorium: <strong>{activeBooking.screen?.name}</strong>
+                    Auditorium: <strong>{activeBooking.screen?.name || 'Audi 1'}</strong>
                   </p>
                 </div>
               </div>
@@ -590,7 +590,9 @@ const BookingSummary = () => {
                   <div>
                     <span className="td-label">SEATS</span>
                     <span className="td-val highlight">
-                      {(confirmedBookingData.seats || activeBooking.selectedSeats.map(s => s.id || s.seatId)).join(', ')}
+                      {Array.isArray(confirmedBookingData.seats) 
+                        ? confirmedBookingData.seats.join(', ') 
+                        : (activeBooking.selectedSeats || []).map(s => s.id || s.seatId).join(', ')}
                     </span>
                   </div>
                   <div>

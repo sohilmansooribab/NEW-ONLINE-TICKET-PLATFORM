@@ -190,7 +190,7 @@ const Navbar = () => {
                     alt={currentUser.name}
                     className="user-avatar"
                   />
-                  <span className="user-firstname">{currentUser.name.split(' ')[0]}</span>
+                  <span className="user-firstname">{currentUser.name?.split ? currentUser.name.split(' ')[0] : (currentUser.name || 'User')}</span>
                   <ChevronDown size={14} className={`user-arrow ${userDropdownOpen ? 'rotate' : ''}`} />
                 </button>
 
@@ -359,7 +359,11 @@ const Navbar = () => {
             {currentUser ? (
               <div className="mobile-user-actions">
                 <div className="mobile-user-card">
-                  <img src={currentUser.avatar} alt={currentUser.name} className="user-avatar" />
+                  <img 
+                    src={currentUser.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80'} 
+                    alt={currentUser.name || 'User'} 
+                    className="user-avatar" 
+                  />
                   <div>
                     <div style={{ fontWeight: 600 }}>{currentUser.name}</div>
                     <div style={{ fontSize: '0.8rem', color: '#A0A3B1' }}>{currentUser.email}</div>

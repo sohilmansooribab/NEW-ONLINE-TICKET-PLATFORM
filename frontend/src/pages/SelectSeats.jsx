@@ -375,14 +375,14 @@ const SelectSeats = () => {
             <h3 className="summary-card-title">Booking Details</h3>
 
             <div className="summary-movie-info">
-              <h4 className="sum-title">{activeBooking.movie?.title}</h4>
-              <p className="sum-theatre">{activeBooking.theatre?.name}</p>
+              <h4 className="sum-title">{activeBooking.movie?.title || 'Selected Movie'}</h4>
+              <p className="sum-theatre">{activeBooking.theatre?.name || 'PVR Cinemas'}</p>
               <p className="sum-datetime">
-                {activeBooking.date} • {activeBooking.time}
+                {(activeBooking.date || 'Today')} • {(activeBooking.time || '06:15 PM')}
               </p>
               <div className="sum-badges">
-                <span className="badge badge-primary">{activeBooking.format}</span>
-                <span className="badge badge-dark">{activeBooking.screen?.name}</span>
+                <span className="badge badge-primary">{activeBooking.format || 'IMAX 3D'}</span>
+                <span className="badge badge-dark">{activeBooking.screen?.name || 'Screen 1'}</span>
                 {isLiveApi && (
                   <span className="badge badge-gold" style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10B981', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
                     Live Seat Sync

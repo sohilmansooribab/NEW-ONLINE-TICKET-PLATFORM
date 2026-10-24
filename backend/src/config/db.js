@@ -18,11 +18,16 @@ export const connectDB = async () => {
   // 2. If currently connecting, wait for connection attempt to settle
   if (mongoose.connection.readyState === 2 || isConnecting) {
     return new Promise((resolve) => {
+      let elapsed = 0;
       const checkInterval = setInterval(() => {
+        elapsed += 100;
         if (mongoose.connection.readyState === 1) {
           clearInterval(checkInterval);
           resolve(true);
-        } else if (mongoose.connection.readyState === 0) {
+        } else if (!isConnecting && mongoose.connection.readyState === 0) {
+          clearInterval(checkInterval);
+          resolve(false);
+        } else if (elapsed >= 12000) {
           clearInterval(checkInterval);
           resolve(false);
         }

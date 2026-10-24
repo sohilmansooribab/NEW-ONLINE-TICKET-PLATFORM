@@ -3,7 +3,14 @@
  * Connects React UI to the Express/MongoDB Backend Service.
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+// Ensure API_BASE_URL is trimmed, has no trailing slash, and always ends with /api
+let rawBase = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api').trim();
+rawBase = rawBase.replace(/\/+$/, ''); // Remove trailing slashes
+if (!rawBase.endsWith('/api')) {
+  rawBase = `${rawBase}/api`;
+}
+const API_BASE_URL = rawBase;
+
 
 /**
  * Base HTTP request wrapper with Bearer token authentication and error normalization.

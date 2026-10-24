@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Ticket, 
@@ -26,11 +26,12 @@ const MyBookings = () => {
     refreshBookings();
   }, [refreshBookings]);
 
-  const upcomingBookings = bookings.filter(b => 
-    b.status === 'CONFIRMED' || b.status === 'pending_payment' || b.status === 'PENDING'
+  const safeBookings = Array.isArray(bookings) ? bookings : [];
+  const upcomingBookings = safeBookings.filter(b => 
+    b && (b.status === 'CONFIRMED' || b.status === 'pending_payment' || b.status === 'PENDING')
   );
-  const pastBookings = bookings.filter(b => 
-    b.status === 'COMPLETED' || b.status === 'CANCELLED' || b.status === 'EXPIRED'
+  const pastBookings = safeBookings.filter(b => 
+    b && (b.status === 'COMPLETED' || b.status === 'CANCELLED' || b.status === 'EXPIRED')
   );
 
   const displayedBookings = activeTab === 'upcoming' ? upcomingBookings : pastBookings;
@@ -135,7 +136,7 @@ const MyBookings = () => {
 
                     <div className="meta-cell">
                       <span className="meta-label">SEATS</span>
-                      <span className="meta-text highlight">{b.seats.join(', ')}</span>
+                      <span className="meta-text highlight">{Array.isArray(b.seats) ? b.seats.join(', ') : (b.seats || '')}</span>
                       <span className="meta-subtext">{b.seatTier}</span>
                     </div>
 
@@ -224,7 +225,7 @@ const MyBookings = () => {
                 </div>
                 <div>
                   <span className="label">SEATS</span>
-                  <span className="val highlight">{selectedTicketModal.seats.join(', ')}</span>
+                  <span className="val highlight">{Array.isArray(selectedTicketModal.seats) ? selectedTicketModal.seats.join(', ') : (selectedTicketModal.seats || '')}</span>
                 </div>
                 <div>
                   <span className="label">AMOUNT</span>

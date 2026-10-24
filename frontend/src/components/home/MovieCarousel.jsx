@@ -97,7 +97,7 @@ const MovieCarousel = ({
         <div className="carousel-track-wrapper">
           <div className="carousel-scroll-track" ref={scrollRef}>
             {movies.map((movie) => (
-              <div key={movie.id} className="carousel-card-wrapper">
+              <div key={movie.slug || movie._id || movie.id} className="carousel-card-wrapper">
                 <MovieCard movie={movie} />
               </div>
             ))}

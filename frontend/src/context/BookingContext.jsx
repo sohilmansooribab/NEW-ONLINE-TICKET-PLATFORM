@@ -15,16 +15,24 @@ export const BookingProvider = ({ children }) => {
 
   // User state
   const [currentUser, setCurrentUser] = useState(() => {
-    const saved = localStorage.getItem('cinebook_user');
-    return saved ? JSON.parse(saved) : null;
+    try {
+      const saved = localStorage.getItem('cinebook_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
   });
 
   const [authLoading, setAuthLoading] = useState(true);
 
   // Bookings list (backed by real API with fallback)
   const [bookings, setBookings] = useState(() => {
-    const saved = localStorage.getItem('cinebook_bookings');
-    return saved ? JSON.parse(saved) : INITIAL_BOOKINGS;
+    try {
+      const saved = localStorage.getItem('cinebook_bookings');
+      return saved ? JSON.parse(saved) : INITIAL_BOOKINGS;
+    } catch {
+      return INITIAL_BOOKINGS;
+    }
   });
 
   // Active booking in-progress

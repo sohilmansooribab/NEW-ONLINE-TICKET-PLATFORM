@@ -332,11 +332,15 @@ const BookingSummary = () => {
                 <div className="sum-seats-left">
                   <span className="sum-strip-label">Reserved Seats:</span>
                   <div className="sum-seat-tags">
-                    {activeBooking.selectedSeats.map(s => (
-                      <span key={s.id || s.seatId} className="sum-seat-tag">
-                        {s.id || s.seatId} ({s.tier})
-                      </span>
-                    ))}
+                    {(activeBooking.selectedSeats || []).length === 0 ? (
+                      <span style={{ color: '#9CA3AF', fontSize: '0.875rem' }}>No seats selected</span>
+                    ) : (
+                      activeBooking.selectedSeats.map(s => (
+                        <span key={s.id || s.seatId} className="sum-seat-tag">
+                          {s.id || s.seatId} ({s.tier})
+                        </span>
+                      ))
+                    )}
                   </div>
                 </div>
                 <Link to={`/select-seats/${activeBooking.showtimeId || activeBooking.theatre?.id}`} className="sum-change-seats-link">

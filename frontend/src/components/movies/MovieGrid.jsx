@@ -29,7 +29,7 @@ const MovieGrid = ({ movies = [], emptyMessage = "No movies match your criteria.
   return (
     <div className="movie-grid-container">
       {movies.map((movie) => (
-        <MovieCard key={movie.id} movie={movie} />
+        <MovieCard key={movie.slug || movie._id || movie.id} movie={movie} />
       ))}
     </div>
   );

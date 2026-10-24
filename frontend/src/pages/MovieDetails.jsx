@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   Star, 
@@ -10,10 +10,11 @@ import {
   Share2, 
   Heart, 
   Check, 
-  ChevronRight,
-  ShieldCheck,
-  Sparkles,
-  X
+  ChevronRight, 
+  ShieldCheck, 
+  Sparkles, 
+  X,
+  Loader2
 } from 'lucide-react';
 import { MOVIES, THEATRES } from '../data/mockData';
 import { useBooking } from '../context/BookingContext';
@@ -27,7 +28,7 @@ const MovieDetails = () => {
 
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
-  const [movie, setMovie] = useState(() => MOVIES.find((m) => m.id === id || m.slug === id) || MOVIES[0]);
+  const [movie, setMovie] = useState(() => MOVIES.find((m) => m.id === id || m.slug === id || m._id === id) || null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,6 +44,10 @@ const MovieDetails = () => {
       })
       .catch((err) => {
         console.warn('Backend movie detail error, falling back:', err.message);
+        // Fallback to local catalogue if not already found
+        if (isMounted) {
+          setMovie((prev) => prev || MOVIES.find((m) => m.id === id || m.slug === id || m._id === id) || MOVIES[0]);
+        }
       })
       .finally(() => {
         if (isMounted) setLoading(false);
@@ -53,7 +58,43 @@ const MovieDetails = () => {
     };
   }, [id]);
 
+  if (loading && !movie) {
+    return (
+      <div className="movie-details-root" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center', color: '#646777' }}>
+          <Loader2 size={36} className="animate-spin" style={{ margin: '0 auto 1rem', color: '#E63946' }} />
+          <p>Loading movie details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!movie) {
+    return (
+      <div className="movie-details-root" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="container" style={{ textAlign: 'center', padding: '4rem 1rem' }}>
+          <Film size={48} style={{ color: '#E63946', margin: '0 auto 1rem' }} />
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '0.75rem' }}>Movie Not Found</h2>
+          <p style={{ color: '#646777', maxWidth: '480px', margin: '0 auto 1.5rem' }}>
+            The requested movie could not be located. It might have been updated or removed from the active screening list.
+          </p>
+          <Link to="/movies" className="btn btn-primary">
+            Browse All Movies
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   const movieId = movie.slug || movie.id || movie._id;
+  const ratingVal = typeof movie.rating === 'number' ? movie.rating.toFixed(1) : (movie.rating || '8.5');
+  const durationText = movie.duration || (movie.durationMinutes ? `${Math.floor(movie.durationMinutes / 60)}h ${movie.durationMinutes % 60}m` : '2h 15m');
+  const releaseStr = movie.releaseDate 
+    ? (typeof movie.releaseDate === 'string' && movie.releaseDate.length > 10 ? new Date(movie.releaseDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : movie.releaseDate)
+    : 'Now Showing';
+  const synopsisText = movie.description || movie.synopsis || 'Experience this cinematic masterpiece in premier sound and laser projection at top multiplex auditoriums.';
+  const genresList = Array.isArray(movie.genres) ? movie.genres : ['Action', 'Drama'];
+  const languagesList = Array.isArray(movie.languages) ? movie.languages : ['Hindi', 'English'];
 
   const handleBookTickets = () => {
     startBooking(movie);
@@ -133,23 +174,23 @@ const MovieDetails = () => {
               <div className="details-meta-row">
                 <div className="details-rating-badge">
                   <Star size={18} fill="#F59E0B" color="#F59E0B" />
-                  <span className="details-rating-val">{movie.rating.toFixed(1)}</span>
+                  <span className="details-rating-val">{ratingVal}</span>
                   <span className="details-rating-scale">/10</span>
-                  <span className="details-votes">({movie.voteCount} Votes)</span>
+                  <span className="details-votes">({movie.voteCount || '10K+'} Votes)</span>
                 </div>
 
                 <div className="meta-separator" />
 
                 <div className="details-meta-item">
                   <Clock size={16} />
-                  <span>{movie.duration}</span>
+                  <span>{durationText}</span>
                 </div>
 
                 <div className="meta-separator" />
 
                 <div className="details-meta-item">
                   <Calendar size={16} />
-                  <span>{movie.releaseDate}</span>
+                  <span>{releaseStr}</span>
                 </div>
               </div>
 
@@ -157,15 +198,15 @@ const MovieDetails = () => {
               <div className="details-specs-row">
                 <div className="spec-item">
                   <span className="spec-label">Languages:</span>
-                  <span className="spec-value">{movie.languages?.join(', ')}</span>
+                  <span className="spec-value">{languagesList.join(', ')}</span>
                 </div>
                 <div className="spec-item">
                   <span className="spec-label">Genres:</span>
-                  <span className="spec-value">{movie.genres?.join(', ')}</span>
+                  <span className="spec-value">{genresList.join(', ')}</span>
                 </div>
                 <div className="spec-item">
                   <span className="spec-label">Director:</span>
-                  <span className="spec-value highlight">{movie.director}</span>
+                  <span className="spec-value highlight">{movie.director || 'Acclaimed Filmmaker'}</span>
                 </div>
               </div>
 
@@ -203,7 +244,7 @@ const MovieDetails = () => {
               {/* Synopsis */}
               <div className="details-synopsis-section">
                 <h3 className="section-subtitle">Synopsis</h3>
-                <p className="details-synopsis-text">{movie.synopsis}</p>
+                <p className="details-synopsis-text">{synopsisText}</p>
               </div>
             </div>
           </div>

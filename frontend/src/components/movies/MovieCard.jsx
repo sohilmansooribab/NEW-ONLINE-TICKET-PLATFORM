@@ -60,7 +60,9 @@ const MovieCard = ({ movie }) => {
         {/* Rating Floating Pill */}
         <div className="poster-rating-pill">
           <Star size={13} fill="#F59E0B" color="#F59E0B" />
-          <span className="rating-score">{movie.rating.toFixed(1)}</span>
+          <span className="rating-score">
+            {typeof movie.rating === 'number' ? movie.rating.toFixed(1) : (movie.rating || '8.5')}
+          </span>
           {movie.voteCount && <span className="rating-votes">({movie.voteCount})</span>}
         </div>
 
@@ -68,7 +70,7 @@ const MovieCard = ({ movie }) => {
         <div className="poster-hover-overlay">
           <div className="poster-overlay-content">
             <span className="overlay-duration">
-              <Clock size={13} /> {movie.duration}
+              <Clock size={13} /> {movie.duration || (movie.durationMinutes ? `${Math.floor(movie.durationMinutes / 60)}h ${movie.durationMinutes % 60}m` : '2h 15m')}
             </span>
             <div className="overlay-actions">
               {isBookingSupported ? (
@@ -91,7 +93,7 @@ const MovieCard = ({ movie }) => {
                 </button>
               )}
               <Link 
-                to={`/movie/${movie.id}`} 
+                to={`/movie/${movieId}`} 
                 className="btn btn-secondary btn-sm overlay-details-btn"
                 onClick={(e) => e.stopPropagation()}
               >
@@ -116,7 +118,7 @@ const MovieCard = ({ movie }) => {
           {movie.releaseDate && (
             <span className="movie-card-release" title={`Release: ${movie.releaseDate}`}>
               <Calendar size={12} className="meta-cal-icon" />
-              <span>{movie.releaseDate}</span>
+              <span>{typeof movie.releaseDate === 'string' && movie.releaseDate.length > 10 && movie.releaseDate.includes('-') ? new Date(movie.releaseDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : movie.releaseDate}</span>
             </span>
           )}
         </div>

@@ -55,7 +55,7 @@ const SelectShowtime = () => {
 
   // Movie state with API loader & fallback
   const [movie, setMovie] = useState(() => 
-    MOVIES.find(m => m.id === movieId || m.slug === movieId) || activeBooking.movie || MOVIES[0]
+    MOVIES.find(m => m.id === movieId || m.slug === movieId || m._id === movieId) || activeBooking?.movie || MOVIES[0]
   );
   const [apiShowtimes, setApiShowtimes] = useState([]);
   const [isLiveApi, setIsLiveApi] = useState(false);
@@ -95,8 +95,12 @@ const SelectShowtime = () => {
           showtimesApi.getShowtimes({ limit: 50 })
             .then(allRes => {
               const shows = allRes?.showtimes || allRes?.data || [];
+              const currentId = movie?._id;
+              const currentSlug = movie?.slug;
               const matched = shows.filter(st => 
-                st.movie?._id === movie._id || st.movie?.slug === movieId || st.movie?.slug === movie.slug
+                (currentId && st.movie?._id === currentId) || 
+                (movieId && st.movie?.slug === movieId) || 
+                (currentSlug && st.movie?.slug === currentSlug)
               );
               if (isMounted && matched.length > 0) {
                 setApiShowtimes(matched);
@@ -115,7 +119,7 @@ const SelectShowtime = () => {
       });
 
     return () => { isMounted = false; };
-  }, [movieId, selectedCity, movie._id, movie.slug]);
+  }, [movieId, selectedCity, movie?._id, movie?.slug]);
 
   // Transform backend showtimes into grouped venue/screen layout
   const displayedTheatres = useMemo(() => {
@@ -199,6 +203,8 @@ const SelectShowtime = () => {
     navigate(`/select-seats/${targetParam}`);
   };
 
+  const safeMovie = movie || MOVIES[0];
+
   return (
     <div className="select-showtime-root">
       {/* Sticky Mini Header for Movie */}
@@ -206,29 +212,29 @@ const SelectShowtime = () => {
         <div className="container movie-bar-content">
           <div className="movie-bar-left">
             <img 
-              src={movie.poster} 
-              alt={movie.title} 
+              src={safeMovie.poster} 
+              alt={safeMovie.title} 
               className="movie-bar-thumb" 
             />
             <div>
               <div className="movie-bar-badges">
-                <span className="badge badge-primary">{movie.certificate || movie.certification || 'U/A'}</span>
-                <span className="badge badge-dark">{(movie.languages || ['Hindi']).join(', ')}</span>
+                <span className="badge badge-primary">{safeMovie.certificate || safeMovie.certification || 'U/A'}</span>
+                <span className="badge badge-dark">{(safeMovie.languages || ['Hindi']).join(', ')}</span>
                 {isLiveApi && (
                   <span className="badge badge-gold" style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10B981', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
                     Live Schedule Active
                   </span>
                 )}
               </div>
-              <h2 className="movie-bar-title">{movie.title}</h2>
+              <h2 className="movie-bar-title">{safeMovie.title}</h2>
               <p className="movie-bar-meta">
-                {movie.duration} • {(movie.genres || []).join(', ')}
+                {safeMovie.duration} • {(safeMovie.genres || []).join(', ')}
               </p>
             </div>
           </div>
 
           <div className="movie-bar-right">
-            <Link to={`/movie/${movie.slug || movie.id || movie._id}`} className="btn btn-outline btn-sm">
+            <Link to={`/movie/${safeMovie.slug || safeMovie.id || safeMovie._id}`} className="btn btn-outline btn-sm">
               Movie Details
             </Link>
           </div>

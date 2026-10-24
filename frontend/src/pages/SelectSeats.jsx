@@ -200,7 +200,7 @@ const SelectSeats = () => {
           <div className="seats-booking-summary-header">
             <h2 className="header-movie-title">{activeBooking.movie?.title || 'Dune: Part Two'}</h2>
             <p className="header-theatre-info">
-              {activeBooking.theatre?.name} • {activeBooking.format} • {activeBooking.date} at {activeBooking.time}
+              {activeBooking.theatre?.name || 'PVR Cinemas'} • {activeBooking.format || 'IMAX 3D'} • {activeBooking.date || 'Today'} at {activeBooking.time || '06:15 PM'}
             </p>
           </div>
 

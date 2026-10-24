@@ -2,12 +2,35 @@ import mongoose from 'mongoose';
 
 /**
  * Connect to MongoDB database via Mongoose
- * Gracefully detects unpopulated placeholder URIs and falls back to local MongoDB
- * so the API server runs seamlessly during development.
+ * Includes connection caching and serverless optimization for cloud platforms (e.g., Vercel, AWS Lambda)
+ * as well as traditional long-running Node.js servers.
  */
+let isConnecting = false;
+
 export const connectDB = async () => {
+  // 1. If already connected, reuse existing connection
+  if (mongoose.connection.readyState === 1) {
+    return true;
+  }
+
+  // 2. If currently connecting, wait for connection attempt to settle
+  if (mongoose.connection.readyState === 2 || isConnecting) {
+    return new Promise((resolve) => {
+      const checkInterval = setInterval(() => {
+        if (mongoose.connection.readyState === 1) {
+          clearInterval(checkInterval);
+          resolve(true);
+        } else if (mongoose.connection.readyState === 0) {
+          clearInterval(checkInterval);
+          resolve(false);
+        }
+      }, 100);
+    });
+  }
+
   try {
-    let mongoURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/cinebook';
+    isConnecting = true;
+    let mongoURI = (process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/cinebook').trim();
 
     // If Atlas connection string contains the unpopulated <db_password> placeholder, fallback to local MongoDB
     if (mongoURI.includes('<db_password>') || mongoURI.includes('<password>')) {
@@ -15,12 +38,18 @@ export const connectDB = async () => {
       mongoURI = 'mongodb://127.0.0.1:27017/cinebook';
     }
 
-    const conn = await mongoose.connect(mongoURI);
+    const conn = await mongoose.connect(mongoURI, {
+      serverSelectionTimeoutMS: 5000, // Timeout fast after 5s instead of hanging
+      socketTimeoutMS: 45000,
+    });
+
     console.log(`[Database] MongoDB Connected: ${conn.connection.host}`);
     return true;
   } catch (error) {
     console.warn(`[Database] Connection Warning: ${error.message}`);
-    console.warn('[Database] Running in standalone mode. Connect MongoDB to enable persistent database storage.');
     return false;
+  } finally {
+    isConnecting = false;
   }
 };
+

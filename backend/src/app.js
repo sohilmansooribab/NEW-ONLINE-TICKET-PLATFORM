@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import mongoose from 'mongoose';
+import { connectDB } from './config/db.js';
 import healthRoutes from './routes/health.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import movieRoutes from './routes/movie.routes.js';
@@ -121,6 +123,27 @@ app.get('/', (req, res) => {
       },
     },
   });
+});
+
+// Database connection assurance for serverless environments (e.g. Vercel)
+app.use(async (req, res, next) => {
+  // Allow root info and health check routes to run without blocking
+  if (req.path === '/' || req.path === '/api/health') {
+    return next();
+  }
+
+  // Ensure MongoDB is connected before handling model operations
+  if (mongoose.connection.readyState !== 1) {
+    const isConnected = await connectDB();
+    if (!isConnected && mongoose.connection.readyState !== 1) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database is not connected. Please ensure MONGODB_URI is set in Vercel Environment Variables and 0.0.0.0/0 is whitelisted in MongoDB Atlas Network Access.',
+        databaseStatus: 'disconnected',
+      });
+    }
+  }
+  next();
 });
 
 // Mount Routes

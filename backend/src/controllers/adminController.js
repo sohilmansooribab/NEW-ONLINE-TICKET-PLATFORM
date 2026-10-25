@@ -5,11 +5,6 @@ import Theatre from '../models/Theatre.js';
 import Showtime from '../models/Showtime.js';
 import Movie from '../models/Movie.js';
 
-/**
- * @desc    Get paginated users list with search & role filter
- * @route   GET /api/admin/users
- * @access  Private (ADMIN)
- */
 export const getAdminUsers = async (req, res, next) => {
   try {
     const { role, search, page = 1, limit = 20 } = req.query;
@@ -33,7 +28,6 @@ export const getAdminUsers = async (req, res, next) => {
       User.countDocuments(filter),
     ]);
 
-    // Attach booking count for each user
     const usersWithStats = await Promise.all(
       users.map(async (u) => {
         const bookingsCount = await Booking.countDocuments({ user: u._id });
@@ -59,11 +53,6 @@ export const getAdminUsers = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Get single user details with booking history
- * @route   GET /api/admin/users/:id
- * @access  Private (ADMIN)
- */
 export const getAdminUserById = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -109,11 +98,6 @@ export const getAdminUserById = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Update user role (USER, ORGANIZER, ADMIN) with privilege safeguards
- * @route   PUT /api/admin/users/:id/role
- * @access  Private (ADMIN)
- */
 export const updateUserRole = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -143,7 +127,6 @@ export const updateUserRole = async (req, res, next) => {
 
     const newRole = role.toUpperCase();
 
-    // Prevent admin from demoting themselves to avoid accidental lockout
     if (targetUser._id.toString() === req.user._id.toString() && newRole !== 'ADMIN') {
       return res.status(400).json({
         success: false,
@@ -151,7 +134,6 @@ export const updateUserRole = async (req, res, next) => {
       });
     }
 
-    // Prevent demoting the last active admin on the platform
     if (targetUser.role === 'ADMIN' && newRole !== 'ADMIN') {
       const adminCount = await User.countDocuments({ role: 'ADMIN' });
       if (adminCount <= 1) {
@@ -175,11 +157,6 @@ export const updateUserRole = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Delete / deactivate user account
- * @route   DELETE /api/admin/users/:id
- * @access  Private (ADMIN)
- */
 export const deleteUser = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -227,11 +204,6 @@ export const deleteUser = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Assign an organizer user to manage a theatre venue
- * @route   PUT /api/admin/theatres/:id/assign-organizer
- * @access  Private (ADMIN)
- */
 export const assignTheatreOrganizer = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -253,7 +225,7 @@ export const assignTheatreOrganizer = async (req, res, next) => {
     }
 
     if (organizerId === null) {
-      // Unassign organizer
+
       theatre.organizer = null;
       await theatre.save();
       return res.status(200).json({
@@ -298,11 +270,6 @@ export const assignTheatreOrganizer = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Admin inspection of all platform bookings with rich filters & pagination
- * @route   GET /api/admin/bookings
- * @access  Private (ADMIN)
- */
 export const getAdminBookings = async (req, res, next) => {
   try {
     const {
@@ -365,14 +332,9 @@ export const getAdminBookings = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Platform-wide analytics: Settled revenue, ticket volumes, top movies & theatres
- * @route   GET /api/admin/analytics
- * @access  Private (ADMIN)
- */
 export const getAdminAnalytics = async (req, res, next) => {
   try {
-    // 1. Settled Revenue & Settled Tickets: Exclusively WHERE paymentStatus = 'paid' and status != 'cancelled'
+
     const revenueAgg = await Booking.aggregate([
       {
         $match: {
@@ -396,7 +358,6 @@ export const getAdminAnalytics = async (req, res, next) => {
     const settledTickets = revenueAgg[0]?.totalTicketsSold || 0;
     const totalPaidBookings = revenueAgg[0]?.totalPaidBookings || 0;
 
-    // 2. Booking Count Breakdown by Status
     const statusAgg = await Booking.aggregate([
       {
         $group: {
@@ -416,7 +377,6 @@ export const getAdminAnalytics = async (req, res, next) => {
       if (item._id) bookingsByStatus[item._id] = item.count;
     });
 
-    // 3. User Breakdown by Role
     const userRoleAgg = await User.aggregate([
       {
         $group: {
@@ -435,7 +395,6 @@ export const getAdminAnalytics = async (req, res, next) => {
       if (item._id) usersByRole[item._id] = item.count;
     });
 
-    // 4. Top Performing Movies (by settled revenue)
     const topMoviesAgg = await Booking.aggregate([
       {
         $match: {
@@ -475,7 +434,6 @@ export const getAdminAnalytics = async (req, res, next) => {
       },
     ]);
 
-    // 5. Top Performing Theatres (by settled revenue)
     const topTheatresAgg = await Booking.aggregate([
       {
         $match: {
@@ -514,7 +472,6 @@ export const getAdminAnalytics = async (req, res, next) => {
       },
     ]);
 
-    // 6. Total Platform Entity Counts
     const [totalTheatres, totalMovies, totalShowtimes, totalBookings] = await Promise.all([
       Theatre.countDocuments({ isActive: true }),
       Movie.countDocuments({ isPublished: true }),

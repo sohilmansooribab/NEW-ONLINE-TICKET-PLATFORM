@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 import Movie from '../models/Movie.js';
 
 export const SAMPLE_MOVIES = [
-  // --- BOLLYWOOD MOVIES (In strictly curated order) ---
+
   {
     title: 'Dhurandhar',
     slug: 'dhurandhar',
@@ -189,7 +189,6 @@ export const SAMPLE_MOVIES = [
     ],
   },
 
-  // --- HOLLYWOOD MOVIES ---
   {
     title: 'Avatar: Fire and Ash',
     slug: 'avatar-fire-and-ash',
@@ -367,9 +366,6 @@ export const SAMPLE_MOVIES = [
   },
 ];
 
-/**
- * Seed sample movies into MongoDB if collection is empty
- */
 export const seedMoviesIfEmpty = async () => {
   try {
     const count = await Movie.countDocuments();
@@ -386,7 +382,6 @@ export const seedMoviesIfEmpty = async () => {
   }
 };
 
-// Standalone execution: node src/config/seedMovies.js
 if (process.argv[1] && process.argv[1].endsWith('seedMovies.js')) {
   (async () => {
     try {
@@ -396,11 +391,10 @@ if (process.argv[1] && process.argv[1].endsWith('seedMovies.js')) {
       }
       await mongoose.connect(mongoURI);
       console.log('Connected to MongoDB for standalone seeding.');
-      
+
       const count = await Movie.countDocuments();
       console.log(`Existing movies in database: ${count}`);
 
-      // Upsert movies by slug so seed is idempotent and safe
       for (const m of SAMPLE_MOVIES) {
         await Movie.findOneAndUpdate({ slug: m.slug }, m, { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true });
       }

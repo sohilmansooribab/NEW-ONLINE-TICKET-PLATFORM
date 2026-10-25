@@ -1,14 +1,8 @@
 import mongoose from 'mongoose';
 import Movie from '../models/Movie.js';
 
-// Helper to escape regex special characters for safe search queries
 const escapeRegex = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-/**
- * @route   GET /api/movies
- * @desc    Get paginated, filtered, and sorted movie list
- * @access  Public
- */
 export const getMovies = async (req, res, next) => {
   try {
     const {
@@ -29,8 +23,6 @@ export const getMovies = async (req, res, next) => {
 
     const query = {};
 
-    // 1. Publication status filter:
-    // Non-admin requests only view published movies
     const isAdmin = req.user && req.user.role === 'ADMIN';
     if (!isAdmin) {
       query.isPublished = true;
@@ -38,38 +30,31 @@ export const getMovies = async (req, res, next) => {
       query.status = status.toLowerCase();
     }
 
-    // 2. Genre filter (matches any genre in genres array, case-insensitive)
     if (genre && genre !== 'all') {
       query.genres = { $regex: new RegExp(`^${escapeRegex(genre)}$`, 'i') };
     }
 
-    // 3. Language filter
     if (language && language !== 'All Languages') {
       query.languages = { $regex: new RegExp(`^${escapeRegex(language)}$`, 'i') };
     }
 
-    // 4. Industry / Category filter (e.g. bollywood, hollywood)
     const targetIndustry = industry || category;
     if (targetIndustry && targetIndustry !== 'all') {
       query.industry = targetIndustry.toLowerCase();
     }
 
-    // 5. Tag filter (e.g. trending, popular, coming-soon, new-releases)
     if (tag && tag !== 'all') {
       query.tags = { $in: [tag.toLowerCase()] };
     }
 
-    // 6. Format filter (e.g. IMAX Laser, 2D, 4DX)
     if (format && format !== 'All Formats') {
       query.formats = { $regex: new RegExp(escapeRegex(format), 'i') };
     }
 
-    // 7. Director filter
     if (director) {
       query.director = { $regex: new RegExp(escapeRegex(director), 'i') };
     }
 
-    // 8. Rating filter
     if (minRating) {
       const parsedRating = parseFloat(minRating);
       if (!isNaN(parsedRating)) {
@@ -77,7 +62,6 @@ export const getMovies = async (req, res, next) => {
       }
     }
 
-    // 9. Optional search string within getMovies
     if (search && search.trim()) {
       const searchRegex = new RegExp(escapeRegex(search.trim()), 'i');
       query.$or = [
@@ -88,7 +72,6 @@ export const getMovies = async (req, res, next) => {
       ];
     }
 
-    // 10. Sorting
     let sortOptions = { isHeroFeatured: -1, releaseDate: -1, _id: -1 };
     if (sort) {
       if (sort === 'rating' || sort === '-rating') {
@@ -108,12 +91,10 @@ export const getMovies = async (req, res, next) => {
       }
     }
 
-    // 11. Pagination calculations
     const pageNum = Math.max(1, parseInt(page, 10) || 1);
     const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 10));
     const skip = (pageNum - 1) * limitNum;
 
-    // 12. Execute database queries
     const [movies, total] = await Promise.all([
       Movie.find(query).sort(sortOptions).skip(skip).limit(limitNum),
       Movie.countDocuments(query),
@@ -135,11 +116,6 @@ export const getMovies = async (req, res, next) => {
   }
 };
 
-/**
- * @route   GET /api/movies/featured
- * @desc    Get featured movies for hero banners and spotlights
- * @access  Public
- */
 export const getFeaturedMovies = async (req, res, next) => {
   try {
     const featured = await Movie.find({
@@ -149,7 +125,6 @@ export const getFeaturedMovies = async (req, res, next) => {
       .sort({ rating: -1, releaseDate: -1 })
       .limit(6);
 
-    // Fallback if no hero movies are explicitly flagged
     let movies = featured;
     if (movies.length === 0) {
       movies = await Movie.find({ isPublished: true })
@@ -167,11 +142,6 @@ export const getFeaturedMovies = async (req, res, next) => {
   }
 };
 
-/**
- * @route   GET /api/movies/search?q=...
- * @desc    Search movies by title, description, director, or cast
- * @access  Public
- */
 export const searchMovies = async (req, res, next) => {
   try {
     const { q, page = 1, limit = 10, industry } = req.query;
@@ -225,11 +195,6 @@ export const searchMovies = async (req, res, next) => {
   }
 };
 
-/**
- * @route   GET /api/movies/:id
- * @desc    Get single movie by MongoDB ObjectId OR friendly slug
- * @access  Public
- */
 export const getMovieByIdOrSlug = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -249,7 +214,6 @@ export const getMovieByIdOrSlug = async (req, res, next) => {
       movie = await Movie.findById(trimmedId);
     }
 
-    // If not found by ObjectId or if param is a slug, query by slug
     if (!movie) {
       movie = await Movie.findOne({ slug: trimmedId.toLowerCase() });
     }
@@ -261,7 +225,6 @@ export const getMovieByIdOrSlug = async (req, res, next) => {
       });
     }
 
-    // Only allow public access if published, unless requested by an ADMIN
     const isAdmin = req.user && req.user.role === 'ADMIN';
     if (!movie.isPublished && !isAdmin) {
       return res.status(404).json({
@@ -279,11 +242,6 @@ export const getMovieByIdOrSlug = async (req, res, next) => {
   }
 };
 
-/**
- * @route   POST /api/movies
- * @desc    Create a new movie record
- * @access  Private (ADMIN only)
- */
 export const createMovie = async (req, res, next) => {
   try {
     const {
@@ -312,7 +270,6 @@ export const createMovie = async (req, res, next) => {
       status,
     } = req.body;
 
-    // 1. Validate required fields
     if (!title || !title.trim()) {
       return res.status(400).json({
         success: false,
@@ -363,7 +320,6 @@ export const createMovie = async (req, res, next) => {
       });
     }
 
-    // 2. Generate slug and ensure uniqueness
     const computedSlug = (slug || title)
       .toLowerCase()
       .trim()
@@ -378,7 +334,6 @@ export const createMovie = async (req, res, next) => {
       });
     }
 
-    // 3. Create record
     const movie = await Movie.create({
       title: title.trim(),
       slug: computedSlug,
@@ -422,11 +377,6 @@ export const createMovie = async (req, res, next) => {
   }
 };
 
-/**
- * @route   PUT /api/movies/:id
- * @desc    Update movie details
- * @access  Private (ADMIN only)
- */
 export const updateMovie = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -447,7 +397,6 @@ export const updateMovie = async (req, res, next) => {
       });
     }
 
-    // If title changed and slug not provided, update slug
     if (req.body.title && !req.body.slug && req.body.title !== movie.title) {
       req.body.slug = req.body.title
         .toLowerCase()
@@ -460,7 +409,6 @@ export const updateMovie = async (req, res, next) => {
       req.body.isPublished = req.body.status === 'published';
     }
 
-    // Map description alias if synopsis passed
     if (req.body.synopsis && !req.body.description) {
       req.body.description = req.body.synopsis;
     }
@@ -486,11 +434,6 @@ export const updateMovie = async (req, res, next) => {
   }
 };
 
-/**
- * @route   PATCH /api/movies/:id/publish
- * @desc    Toggle or set publication status of a movie
- * @access  Private (ADMIN only)
- */
 export const togglePublishMovie = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -511,7 +454,6 @@ export const togglePublishMovie = async (req, res, next) => {
       });
     }
 
-    // Toggle or set to requested status
     const requestedStatus = req.body.status;
     if (requestedStatus && ['published', 'draft', 'archived'].includes(requestedStatus)) {
       movie.status = requestedStatus;
@@ -538,11 +480,6 @@ export const togglePublishMovie = async (req, res, next) => {
   }
 };
 
-/**
- * @route   DELETE /api/movies/:id
- * @desc    Delete a movie from catalogue
- * @access  Private (ADMIN only)
- */
 export const deleteMovie = async (req, res, next) => {
   try {
     const { id } = req.params;

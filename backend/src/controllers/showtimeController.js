@@ -4,11 +4,6 @@ import Movie from '../models/Movie.js';
 import Theatre from '../models/Theatre.js';
 import Screen from '../models/Screen.js';
 
-/**
- * @desc    Get all showtimes with rich filtering (movie, theatre, city, date, format) and pagination
- * @route   GET /api/showtimes
- * @access  Public
- */
 export const getShowtimes = async (req, res, next) => {
   try {
     const {
@@ -26,7 +21,6 @@ export const getShowtimes = async (req, res, next) => {
 
     const filter = { isActive: true };
 
-    // Filter by Movie ID or slug
     if (movie) {
       if (mongoose.Types.ObjectId.isValid(movie)) {
         filter.movie = movie;
@@ -45,7 +39,6 @@ export const getShowtimes = async (req, res, next) => {
       }
     }
 
-    // Filter by Theatre ID or slug
     if (theatre) {
       if (mongoose.Types.ObjectId.isValid(theatre)) {
         filter.theatre = theatre;
@@ -64,12 +57,10 @@ export const getShowtimes = async (req, res, next) => {
       }
     }
 
-    // Filter by Screen ID
     if (screen && mongoose.Types.ObjectId.isValid(screen)) {
       filter.screen = screen;
     }
 
-    // Filter by City (theatres located in this city)
     if (city && city.toLowerCase() !== 'all') {
       const theatresInCity = await Theatre.find({
         city: city.toLowerCase().trim(),
@@ -87,7 +78,6 @@ export const getShowtimes = async (req, res, next) => {
       filter.theatre = { $in: theatreIds };
     }
 
-    // Filter by Date (YYYY-MM-DD)
     if (date) {
       const targetDate = new Date(date);
       if (isNaN(targetDate.getTime())) {
@@ -107,12 +97,10 @@ export const getShowtimes = async (req, res, next) => {
       filter.startTime = { $gte: new Date() };
     }
 
-    // Filter by Format
     if (format && format !== 'All Formats') {
       filter.format = format;
     }
 
-    // Filter by Status
     if (status) {
       filter.status = status;
     }
@@ -132,7 +120,6 @@ export const getShowtimes = async (req, res, next) => {
       Showtime.countDocuments(filter),
     ]);
 
-    // Enhance each showtime with computed availability summary
     const enhancedShowtimes = showtimes.map((st) => {
       const showObj = st.toObject();
       const bookedCount = showObj.bookedSeats ? showObj.bookedSeats.length : 0;
@@ -174,11 +161,6 @@ export const getShowtimes = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Get single showtime by ID
- * @route   GET /api/showtimes/:id
- * @access  Public
- */
 export const getShowtimeById = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -223,11 +205,6 @@ export const getShowtimeById = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Get complete seat layout and live seat availability for a showtime
- * @route   GET /api/showtimes/:id/seats
- * @access  Public
- */
 export const getShowtimeSeats = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -259,17 +236,14 @@ export const getShowtimeSeats = async (req, res, next) => {
       });
     }
 
-    // Set of booked seat IDs for O(1) lookup
     const bookedSeatIds = new Set(showtime.bookedSeats.map((b) => b.seatId.toUpperCase()));
 
-    // Active unexpired holds
     const now = new Date();
     const activeHeldSeats = (showtime.heldSeats || []).filter(
       (h) => new Date(h.expiresAt) > now
     );
     const heldSeatIds = new Set(activeHeldSeats.map((h) => h.seatId.toUpperCase()));
 
-    // Map screen seats with real-time status and pricing
     const seatsWithLiveStatus = screen.seats.map((seat) => {
       const isBooked = bookedSeatIds.has(seat.seatId.toUpperCase());
       const isHeld = heldSeatIds.has(seat.seatId.toUpperCase());
@@ -295,7 +269,6 @@ export const getShowtimeSeats = async (req, res, next) => {
       };
     });
 
-    // Group seats by rows for easy frontend grid rendering
     const rowsMap = new Map();
     for (const seat of seatsWithLiveStatus) {
       if (!rowsMap.has(seat.row)) {
@@ -362,11 +335,6 @@ export const getShowtimeSeats = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Create a new showtime with conflict collision detection
- * @route   POST /api/showtimes
- * @access  Private (ADMIN)
- */
 export const createShowtime = async (req, res, next) => {
   try {
     const {
@@ -384,7 +352,6 @@ export const createShowtime = async (req, res, next) => {
       allowPast,
     } = req.body;
 
-    // Validate foreign keys
     if (!movie || !theatre || !screen || !startTime) {
       return res.status(400).json({
         success: false,
@@ -419,7 +386,6 @@ export const createShowtime = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Screen not found' });
     }
 
-    // Verify screen belongs to theatre
     if (foundScreen.theatre.toString() !== foundTheatre._id.toString()) {
       return res.status(400).json({
         success: false,
@@ -435,7 +401,6 @@ export const createShowtime = async (req, res, next) => {
       });
     }
 
-    // Check if start time is in the past (unless allowPast flag set for historical/seeding)
     if (!allowPast && startDate < new Date()) {
       return res.status(400).json({
         success: false,
@@ -443,7 +408,6 @@ export const createShowtime = async (req, res, next) => {
       });
     }
 
-    // Determine endTime
     let endDate;
     if (endTime) {
       endDate = new Date(endTime);
@@ -454,12 +418,11 @@ export const createShowtime = async (req, res, next) => {
         });
       }
     } else {
-      // Calculate end time: movie duration + 20 minutes buffer for cleaning/intermission
+
       const durationMinutes = foundMovie.durationMinutes || 120;
       endDate = new Date(startDate.getTime() + (durationMinutes + 20) * 60000);
     }
 
-    // Prevent Overlapping Showtimes on the same Screen
     const conflict = await Showtime.findConflict(screen, startDate, endDate);
     if (conflict) {
       return res.status(409).json({
@@ -505,11 +468,6 @@ export const createShowtime = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Update a showtime
- * @route   PUT /api/showtimes/:id
- * @access  Private (ADMIN)
- */
 export const updateShowtime = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -552,7 +510,6 @@ export const updateShowtime = async (req, res, next) => {
       });
     }
 
-    // If screen or times changed, re-validate conflict
     if (startTime || endTime || screen) {
       const conflict = await Showtime.findConflict(
         targetScreen,
@@ -596,11 +553,6 @@ export const updateShowtime = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Delete or cancel a showtime
- * @route   DELETE /api/showtimes/:id
- * @access  Private (ADMIN)
- */
 export const deleteShowtime = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -620,7 +572,6 @@ export const deleteShowtime = async (req, res, next) => {
       });
     }
 
-    // If there are booked seats, cancel rather than permanently hard deleting to protect booking data integrity
     if (showtime.bookedSeats && showtime.bookedSeats.length > 0) {
       showtime.status = 'cancelled';
       showtime.isActive = false;

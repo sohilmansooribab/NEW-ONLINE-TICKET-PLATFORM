@@ -5,19 +5,11 @@ import Booking from '../models/Booking.js';
 import Screen from '../models/Screen.js';
 import Movie from '../models/Movie.js';
 
-/**
- * Helper to fetch IDs of all theatres assigned to the requesting organizer
- */
 const getOrganizerTheatreIds = async (userId) => {
   const theatres = await Theatre.find({ organizer: userId, isActive: true }).select('_id');
   return theatres.map((t) => t._id);
 };
 
-/**
- * @desc    Get organizer profile and their assigned theatre venues
- * @route   GET /api/organizer/profile
- * @access  Private (ORGANIZER, ADMIN)
- */
 export const getOrganizerProfile = async (req, res, next) => {
   try {
     const assignedTheatres = await Theatre.find({
@@ -41,11 +33,6 @@ export const getOrganizerProfile = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Get all theatres assigned to the organizer
- * @route   GET /api/organizer/theatres
- * @access  Private (ORGANIZER, ADMIN)
- */
 export const getOrganizerTheatres = async (req, res, next) => {
   try {
     const theatres = await Theatre.find({
@@ -63,11 +50,6 @@ export const getOrganizerTheatres = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Get showtimes strictly for organizer's assigned theatres
- * @route   GET /api/organizer/showtimes
- * @access  Private (ORGANIZER, ADMIN)
- */
 export const getOrganizerShowtimes = async (req, res, next) => {
   try {
     const theatreIds = await getOrganizerTheatreIds(req.user._id);
@@ -129,11 +111,6 @@ export const getOrganizerShowtimes = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Create a new showtime on an organizer's assigned theatre
- * @route   POST /api/organizer/showtimes
- * @access  Private (ORGANIZER, ADMIN)
- */
 export const createOrganizerShowtime = async (req, res, next) => {
   try {
     const { movie, theatre, screen, startTime, endTime, format, language, tierPricing } =
@@ -146,7 +123,6 @@ export const createOrganizerShowtime = async (req, res, next) => {
       });
     }
 
-    // Ownership check: Verify that theatre is assigned to this organizer
     const targetTheatre = await Theatre.findById(theatre);
     if (!targetTheatre) {
       return res.status(404).json({ success: false, message: 'Theatre not found' });
@@ -162,7 +138,6 @@ export const createOrganizerShowtime = async (req, res, next) => {
       });
     }
 
-    // Verify screen belongs to this theatre
     const targetScreen = await Screen.findById(screen);
     if (!targetScreen || targetScreen.theatre.toString() !== targetTheatre._id.toString()) {
       return res.status(400).json({
@@ -171,7 +146,6 @@ export const createOrganizerShowtime = async (req, res, next) => {
       });
     }
 
-    // Verify movie
     const targetMovie = await Movie.findById(movie);
     if (!targetMovie) {
       return res.status(404).json({ success: false, message: 'Movie not found' });
@@ -190,7 +164,6 @@ export const createOrganizerShowtime = async (req, res, next) => {
       ? new Date(endTime)
       : new Date(startDate.getTime() + (durationMinutes + 20) * 60000);
 
-    // Collision check
     const conflict = await Showtime.findConflict(targetScreen._id, startDate, endDate);
     if (conflict) {
       return res.status(409).json({
@@ -224,11 +197,6 @@ export const createOrganizerShowtime = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Update a showtime on an organizer's assigned theatre
- * @route   PUT /api/organizer/showtimes/:id
- * @access  Private (ORGANIZER, ADMIN)
- */
 export const updateOrganizerShowtime = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -242,7 +210,6 @@ export const updateOrganizerShowtime = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Showtime not found' });
     }
 
-    // Ownership check
     if (
       showtime.theatre?.organizer?.toString() !== req.user._id.toString() &&
       req.user.role !== 'ADMIN'
@@ -272,11 +239,6 @@ export const updateOrganizerShowtime = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Cancel/delete a showtime on an organizer's assigned theatre
- * @route   DELETE /api/organizer/showtimes/:id
- * @access  Private (ORGANIZER, ADMIN)
- */
 export const deleteOrganizerShowtime = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -290,7 +252,6 @@ export const deleteOrganizerShowtime = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Showtime not found' });
     }
 
-    // Ownership check
     if (
       showtime.theatre?.organizer?.toString() !== req.user._id.toString() &&
       req.user.role !== 'ADMIN'
@@ -301,7 +262,6 @@ export const deleteOrganizerShowtime = async (req, res, next) => {
       });
     }
 
-    // If bookings exist, cancel rather than delete
     if (showtime.bookedSeats && showtime.bookedSeats.length > 0) {
       showtime.status = 'cancelled';
       showtime.isActive = false;
@@ -323,11 +283,6 @@ export const deleteOrganizerShowtime = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Get bookings strictly for organizer's assigned theatres
- * @route   GET /api/organizer/bookings
- * @access  Private (ORGANIZER, ADMIN)
- */
 export const getOrganizerBookings = async (req, res, next) => {
   try {
     const theatreIds = await getOrganizerTheatreIds(req.user._id);
@@ -376,11 +331,6 @@ export const getOrganizerBookings = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Get settled revenue and booking statistics strictly for organizer's assigned theatres
- * @route   GET /api/organizer/analytics
- * @access  Private (ORGANIZER, ADMIN)
- */
 export const getOrganizerAnalytics = async (req, res, next) => {
   try {
     const theatreIds = await getOrganizerTheatreIds(req.user._id);
@@ -399,7 +349,6 @@ export const getOrganizerAnalytics = async (req, res, next) => {
       });
     }
 
-    // Settled revenue for organizer's venues
     const now = new Date();
     const todayStart = new Date(now);
     todayStart.setUTCHours(0, 0, 0, 0);
@@ -445,7 +394,6 @@ export const getOrganizerAnalytics = async (req, res, next) => {
     const revenueToday = todayRevenueAgg[0]?.todayRevenue || 0;
     const ticketsSoldToday = todayRevenueAgg[0]?.todayTickets || 0;
 
-    // Show breakdown
     const upcomingShows = await Showtime.find({
       theatre: { $in: theatreIds },
       isActive: true,

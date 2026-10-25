@@ -1,10 +1,6 @@
-/* ==========================================================================
-   CineBook Design System — Premium White Theme
-   Brand: CineBook — Elegant, Modern, Clean Cinema Experience
-   ========================================================================== */
 
 :root {
-  /* Color Tokens */
+
   --bg-primary: #FFFFFF;
   --bg-secondary: #F8F9FC;
   --bg-card: #FFFFFF;
@@ -13,24 +9,20 @@
   --bg-glass: rgba(255, 255, 255, 0.95);
   --bg-glass-card: rgba(255, 255, 255, 0.9);
 
-  /* Primary Brand Red */
   --primary: #E63946;
   --primary-hover: #C92D3A;
   --primary-light: rgba(230, 57, 70, 0.08);
   --primary-glow: rgba(230, 57, 70, 0.2);
 
-  /* Typography Colors */
   --text-primary: #171923;
   --text-secondary: #6B7280;
   --text-muted: #9CA3AF;
   --text-inverse: #FFFFFF;
 
-  /* Borders */
   --border: #E5E7EB;
   --border-light: #F3F4F6;
   --border-focus: #E63946;
 
-  /* Accents */
   --accent-gold: #D97706;
   --accent-gold-light: rgba(217, 119, 6, 0.1);
   --accent-green: #059669;
@@ -39,35 +31,29 @@
   --accent-blue-light: rgba(37, 99, 235, 0.1);
   --accent-purple: #7C3AED;
 
-  /* Typography */
   --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-  /* Elevations & Shadows (Clean & Subtle) */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.02);
   --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.07), 0 4px 10px rgba(0, 0, 0, 0.03);
   --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
   --shadow-primary: 0 4px 14px rgba(230, 57, 70, 0.22);
 
-  /* Radius */
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
   --radius-xl: 20px;
   --radius-full: 9999px;
 
-  /* Transitions */
   --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* Layout */
   --max-width: 1320px;
   --nav-height: 74px;
 }
 
-/* Base Reset */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -91,7 +77,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Typography Defaults */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   color: var(--text-primary);
@@ -128,7 +113,6 @@ img {
   display: block;
 }
 
-/* Custom Scrollbar (Light Theme) */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -144,7 +128,6 @@ img {
   background: #9CA3AF;
 }
 
-/* Containers */
 .container {
   width: 100%;
   max-width: var(--max-width);
@@ -160,7 +143,6 @@ img {
   padding-right: 1.5rem;
 }
 
-/* Section Common Styling */
 .section-wrapper {
   padding: 4rem 0;
 }
@@ -212,7 +194,6 @@ img {
   transform: translateX(3px);
 }
 
-/* Button Component Styles */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -308,7 +289,6 @@ img {
   box-shadow: none !important;
 }
 
-/* Card Styling (Clean White with Soft Borders) */
 .cine-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -324,7 +304,6 @@ img {
   transform: translateY(-3px);
 }
 
-/* Badges (Light & Crisp) */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -367,7 +346,6 @@ img {
   border: 1px solid #E5E7EB;
 }
 
-/* Forms & Inputs */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -431,7 +409,6 @@ img {
   margin-top: 0.25rem;
 }
 
-/* Grid Layouts */
 .grid-movies {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
@@ -445,7 +422,6 @@ img {
   }
 }
 
-/* Glass Header (White Translucent) */
 .glass-panel {
   background: var(--bg-glass);
   backdrop-filter: blur(12px);
@@ -453,7 +429,6 @@ img {
   border: 1px solid var(--border);
 }
 
-/* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
@@ -468,7 +443,6 @@ img {
   animation: fadeIn 0.35s ease-out forwards;
 }
 
-/* Layout Utilities */
 .flex-between {
   display: flex;
   align-items: center;

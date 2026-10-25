@@ -1,4 +1,4 @@
-/* Booking Summary Styles — Premium White Theme */
+
 .booking-summary-root {
   min-height: 100vh;
   padding-bottom: 5rem;
@@ -9,7 +9,6 @@
   padding-top: 2rem;
 }
 
-/* Demo Notice Bar */
 .demo-notice-bar {
   display: flex;
   align-items: center;
@@ -23,7 +22,6 @@
   color: #B45309;
 }
 
-/* Two Column Layout */
 .summary-two-col-layout {
   display: grid;
   grid-template-columns: 1fr 380px;
@@ -47,7 +45,6 @@
   box-shadow: var(--shadow-card);
 }
 
-/* Movie Preview */
 .sum-movie-preview {
   display: flex;
   gap: 1.5rem;
@@ -140,7 +137,6 @@
   color: var(--primary);
 }
 
-/* Contact Details Form */
 .card-section-title {
   font-size: 1.2rem;
   font-weight: 700;
@@ -160,7 +156,6 @@
   gap: 1rem;
 }
 
-/* Payment Modes */
 .payment-options-grid {
   display: flex;
   flex-direction: column;
@@ -214,7 +209,6 @@
   color: var(--text-secondary);
 }
 
-/* Right Pane: Pricing Card */
 .pricing-summary-card {
   position: sticky;
   top: calc(var(--nav-height) + 20px);
@@ -278,7 +272,6 @@
   color: #DC2626;
 }
 
-/* Line Items */
 .line-items-table {
   display: flex;
   flex-direction: column;
@@ -333,7 +326,6 @@
   margin-top: 1rem;
 }
 
-/* Confirmation Success Modal */
 .confirm-modal-backdrop {
   position: fixed;
   inset: 0;
@@ -381,7 +373,6 @@
   margin-bottom: 1.75rem;
 }
 
-/* Ticket Visual Card */
 .ticket-visual-card {
   background: #F8F9FC;
   border: 1px solid var(--border);

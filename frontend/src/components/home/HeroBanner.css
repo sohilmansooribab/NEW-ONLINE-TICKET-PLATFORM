@@ -1,4 +1,4 @@
-/* Hero Banner Styles — Premium White Theme */
+
 .hero-banner-root-white {
   position: relative;
   background: linear-gradient(180deg, #FFFFFF 0%, #F8F9FC 100%);
@@ -19,7 +19,6 @@
   align-items: center;
 }
 
-/* Left Column: Movie Info */
 .hero-info-column {
   display: flex;
   flex-direction: column;
@@ -127,7 +126,6 @@
   border-color: #D1D5DB;
 }
 
-/* Carousel Nav */
 .hero-carousel-nav {
   display: flex;
   align-items: center;
@@ -183,7 +181,6 @@
   background-color: var(--primary-light);
 }
 
-/* Right Column: Prominent Artwork Card */
 .hero-artwork-column {
   display: flex;
   justify-content: center;

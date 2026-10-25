@@ -10,7 +10,7 @@ const MovieCarousel = ({
   icon: IconComponent, 
   movies = [], 
   viewAllLink = '/movies',
-  bgType = 'white' // 'white' | 'light'
+  bgType = 'white' 
 }) => {
   const scrollRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -50,7 +50,7 @@ const MovieCarousel = ({
   return (
     <section className={`carousel-section-root ${bgType === 'light' ? 'bg-light-surface' : 'bg-white-surface'}`}>
       <div className="container">
-        {/* Carousel Header */}
+
         <div className="carousel-section-header">
           <div className="carousel-title-group">
             {tagline && (
@@ -63,13 +63,12 @@ const MovieCarousel = ({
           </div>
 
           <div className="carousel-controls-group">
-            {/* View All link */}
+
             <Link to={viewAllLink} className="carousel-view-all-link">
               <span>View All</span>
               <ArrowRightIcon size={16} />
             </Link>
 
-            {/* Navigation Arrows */}
             <div className="carousel-nav-arrows">
               <button
                 type="button"
@@ -93,7 +92,6 @@ const MovieCarousel = ({
           </div>
         </div>
 
-        {/* Carousel Track Container */}
         <div className="carousel-track-wrapper">
           <div className="carousel-scroll-track" ref={scrollRef}>
             {movies.map((movie) => (

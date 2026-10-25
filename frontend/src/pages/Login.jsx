@@ -43,7 +43,6 @@ const Login = () => {
         password,
       });
 
-      // Role-based routing based exclusively on backend-issued role
       const userRole = (verifiedUser?.role || 'USER').toUpperCase();
       if (userRole === 'ORGANIZER') {
         navigate('/organizer');
@@ -53,13 +52,11 @@ const Login = () => {
         navigate('/');
       }
     } catch (err) {
+
       setServerError(err.message || 'Invalid email or password. Please verify your credentials.');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
-  // Demo auto-fill helpers for seeded accounts
   const handleQuickFill = (roleType) => {
     setServerError('');
     setErrors({});
@@ -78,7 +75,7 @@ const Login = () => {
   return (
     <div className="auth-page-root">
       <div className="auth-card-box animate-fade-in">
-        {/* Brand Header */}
+
         <div className="auth-brand-head">
           <Link to="/" className="auth-brand-logo">
             <div className="brand-icon-wrapper">
@@ -94,7 +91,6 @@ const Login = () => {
           </p>
         </div>
 
-        {/* Quick Fill Pills */}
         <div className="quick-fill-section">
           <span className="quick-fill-label">One-Click Demo Roles:</span>
           <div className="quick-fill-buttons">
@@ -122,7 +118,6 @@ const Login = () => {
           </div>
         </div>
 
-        {/* Server Error Alert */}
         {serverError && (
           <div className="auth-error-banner" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1rem', background: 'rgba(230, 57, 70, 0.15)', border: '1px solid rgba(230, 57, 70, 0.4)', borderRadius: '8px', color: '#FF6B6B', fontSize: '0.875rem', marginBottom: '1.25rem' }}>
             <AlertCircle size={18} style={{ flexShrink: 0 }} />
@@ -130,7 +125,6 @@ const Login = () => {
           </div>
         )}
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="auth-form" noValidate>
           <div className="form-group">
             <label className="form-label">Email Address</label>
@@ -194,7 +188,6 @@ const Login = () => {
           </button>
         </form>
 
-        {/* Switch to Signup */}
         <div className="auth-footer-switch">
           <span>Don't have an account yet?</span>
           <Link to="/signup" className="auth-switch-link">

@@ -1,10 +1,6 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
-/**
- * Protect Middleware
- * Verifies Bearer JWT token from Authorization header and attaches authenticated user to req.user
- */
 export const protect = async (req, res, next) => {
   let token;
 
@@ -26,7 +22,6 @@ export const protect = async (req, res, next) => {
     const jwtSecret = process.env.JWT_SECRET || 'cinebook_default_secret_key_change_in_production';
     const decoded = jwt.verify(token, jwtSecret);
 
-    // Fetch user without passwordHash
     const currentUser = await User.findById(decoded.id);
     if (!currentUser) {
       return res.status(401).json({
@@ -51,10 +46,6 @@ export const protect = async (req, res, next) => {
   }
 };
 
-/**
- * Authorize Middleware
- * Restricts access to specific roles (e.g., authorize('ADMIN', 'ORGANIZER'))
- */
 export const authorize = (...roles) => {
   return (req, res, next) => {
     if (!req.user || !roles.includes(req.user.role)) {

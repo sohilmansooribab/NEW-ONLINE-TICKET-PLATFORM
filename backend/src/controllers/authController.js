@@ -1,9 +1,6 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
-/**
- * Helper function to generate signed JWT token
- */
 const generateToken = (user) => {
   const secret = process.env.JWT_SECRET || 'cinebook_default_secret_key_change_in_production';
   const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
@@ -19,16 +16,10 @@ const generateToken = (user) => {
   );
 };
 
-/**
- * @route   POST /api/auth/signup
- * @desc    Public customer registration (Strictly limited to USER role)
- * @access  Public
- */
 export const signup = async (req, res, next) => {
   try {
     const { name, email, password, role } = req.body;
 
-    // 1. Validate required fields
     if (!name || typeof name !== 'string' || !name.trim()) {
       return res.status(400).json({
         success: false,
@@ -43,7 +34,6 @@ export const signup = async (req, res, next) => {
       });
     }
 
-    // 2. Validate email format
     const normalizedEmail = email.trim().toLowerCase();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(normalizedEmail)) {
@@ -53,7 +43,6 @@ export const signup = async (req, res, next) => {
       });
     }
 
-    // 3. Validate password length
     if (!password || typeof password !== 'string') {
       return res.status(400).json({
         success: false,
@@ -68,7 +57,6 @@ export const signup = async (req, res, next) => {
       });
     }
 
-    // 4. Role restriction: public signup cannot register as ADMIN or ORGANIZER
     if (role && role.toString().trim().toUpperCase() !== 'USER') {
       return res.status(400).json({
         success: false,
@@ -76,7 +64,6 @@ export const signup = async (req, res, next) => {
       });
     }
 
-    // 5. Check if email is already registered
     const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
       return res.status(409).json({
@@ -85,10 +72,8 @@ export const signup = async (req, res, next) => {
       });
     }
 
-    // 6. Hash password with bcrypt
     const passwordHash = await User.hashPassword(password);
 
-    // 7. Persist user with USER role
     const newUser = await User.create({
       name: name.trim(),
       email: normalizedEmail,
@@ -96,10 +81,8 @@ export const signup = async (req, res, next) => {
       role: 'USER',
     });
 
-    // 8. Generate JWT token
     const token = generateToken(newUser);
 
-    // 9. Respond with user object and token (passwordHash is omitted by User.toJSON)
     res.status(201).json({
       success: true,
       message: 'Account registered successfully',
@@ -117,16 +100,10 @@ export const signup = async (req, res, next) => {
   }
 };
 
-/**
- * @route   POST /api/auth/login
- * @desc    Authenticate user, verify password hash, and return JWT
- * @access  Public
- */
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    // 1. Validate inputs
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -134,10 +111,8 @@ export const login = async (req, res, next) => {
       });
     }
 
-    // 2. Normalize email
     const normalizedEmail = email.toString().trim().toLowerCase();
 
-    // 3. Find user and explicitly select passwordHash
     const user = await User.findOne({ email: normalizedEmail }).select('+passwordHash');
     if (!user) {
       return res.status(401).json({
@@ -146,7 +121,6 @@ export const login = async (req, res, next) => {
       });
     }
 
-    // 4. Verify password with bcrypt
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       return res.status(401).json({
@@ -155,10 +129,8 @@ export const login = async (req, res, next) => {
       });
     }
 
-    // 5. Generate JWT token
     const token = generateToken(user);
 
-    // 6. Respond with user object and token
     res.status(200).json({
       success: true,
       message: 'Logged in successfully',
@@ -170,11 +142,6 @@ export const login = async (req, res, next) => {
   }
 };
 
-/**
- * @route   GET /api/auth/me
- * @desc    Get current authenticated user profile
- * @access  Private (Requires Bearer JWT)
- */
 export const getMe = async (req, res) => {
   res.status(200).json({
     success: true,

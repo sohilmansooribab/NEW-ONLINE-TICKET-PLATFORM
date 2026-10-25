@@ -58,7 +58,6 @@ export const seedDemoUsers = async () => {
       }
     }
 
-    // If organizer, assign to first theatre if unassigned
     if (acc.role === 'ORGANIZER') {
       const theatre = await Theatre.findOne();
       if (theatre && !theatre.organizer) {
@@ -74,7 +73,6 @@ export const seedDemoUsers = async () => {
   }
 };
 
-// If run directly via CLI
 if (process.argv[1]?.endsWith('seedUsers.js')) {
   seedDemoUsers()
     .then(() => {

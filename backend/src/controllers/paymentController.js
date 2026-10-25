@@ -10,11 +10,6 @@ import {
   verifyWebhookSignature,
 } from '../services/paymentService.js';
 
-/**
- * @desc    Create a payment provider order for an eligible pending booking
- * @route   POST /api/payments/create-order
- * @access  Private (USER, ADMIN)
- */
 export const createPaymentOrder = async (req, res, next) => {
   try {
     const { bookingId } = req.body;
@@ -41,7 +36,6 @@ export const createPaymentOrder = async (req, res, next) => {
       });
     }
 
-    // Booking ownership check
     if (booking.user.toString() !== req.user._id.toString() && req.user.role !== 'ADMIN') {
       return res.status(403).json({
         success: false,
@@ -49,7 +43,6 @@ export const createPaymentOrder = async (req, res, next) => {
       });
     }
 
-    // Verify booking state
     if (booking.status === 'confirmed' || booking.paymentStatus === 'paid') {
       return res.status(400).json({
         success: false,
@@ -71,7 +64,6 @@ export const createPaymentOrder = async (req, res, next) => {
       });
     }
 
-    // Check payment gateway configuration
     if (!isPaymentConfigured()) {
       return res.status(503).json({
         success: false,
@@ -81,7 +73,6 @@ export const createPaymentOrder = async (req, res, next) => {
       });
     }
 
-    // Idempotency: If an active created order exists for this booking, return it instead of creating duplicate orders
     const existingPayment = await Payment.findOne({
       booking: booking._id,
       status: 'created',
@@ -101,7 +92,6 @@ export const createPaymentOrder = async (req, res, next) => {
       });
     }
 
-    // Authoritative server-side price in paise (1 INR = 100 paise)
     const amountInPaise = Math.round(booking.pricing.totalAmount * 100);
 
     const razorpayOrder = await createProviderOrder({
@@ -115,7 +105,6 @@ export const createPaymentOrder = async (req, res, next) => {
       },
     });
 
-    // Record payment order
     const payment = await Payment.create({
       orderId: razorpayOrder.id,
       booking: booking._id,
@@ -147,11 +136,6 @@ export const createPaymentOrder = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Cryptographically verify payment signature and confirm booking
- * @route   POST /api/payments/verify
- * @access  Private (USER, ADMIN)
- */
 export const verifyPayment = async (req, res, next) => {
   try {
     const { bookingId, razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
@@ -179,7 +163,6 @@ export const verifyPayment = async (req, res, next) => {
       });
     }
 
-    // Ownership check
     if (booking.user.toString() !== req.user._id.toString() && req.user.role !== 'ADMIN') {
       return res.status(403).json({
         success: false,
@@ -187,7 +170,6 @@ export const verifyPayment = async (req, res, next) => {
       });
     }
 
-    // Ensure booking belongs to the provided order
     if (booking.paymentOrderId && booking.paymentOrderId !== razorpay_order_id) {
       return res.status(400).json({
         success: false,
@@ -195,7 +177,6 @@ export const verifyPayment = async (req, res, next) => {
       });
     }
 
-    // Check payment gateway configuration
     if (!isPaymentConfigured()) {
       return res.status(503).json({
         success: false,
@@ -205,7 +186,6 @@ export const verifyPayment = async (req, res, next) => {
       });
     }
 
-    // Anti-replay check: ensure payment ID was not already captured on another booking
     const duplicatePayment = await Payment.findOne({
       paymentId: razorpay_payment_id,
       status: 'captured',
@@ -219,7 +199,6 @@ export const verifyPayment = async (req, res, next) => {
       });
     }
 
-    // Cryptographic signature verification
     const isSignatureValid = verifyPaymentSignature({
       orderId: razorpay_order_id,
       paymentId: razorpay_payment_id,
@@ -227,7 +206,7 @@ export const verifyPayment = async (req, res, next) => {
     });
 
     if (!isSignatureValid) {
-      // Record failed verification attempt
+
       await Payment.updateOne(
         { orderId: razorpay_order_id },
         {
@@ -245,7 +224,6 @@ export const verifyPayment = async (req, res, next) => {
       });
     }
 
-    // Update Payment record
     const payment = await Payment.findOneAndUpdate(
       { orderId: razorpay_order_id },
       {
@@ -258,8 +236,6 @@ export const verifyPayment = async (req, res, next) => {
       { returnDocument: 'after' }
     );
 
-    // Atomic conditional booking confirmation
-    // Only transition if booking is still in pending_payment status (prevents race with concurrent cancellation)
     const updatedBooking = await Booking.findOneAndUpdate(
       {
         _id: booking._id,
@@ -286,7 +262,7 @@ export const verifyPayment = async (req, res, next) => {
       .populate('showtime', 'startTime endTime format language');
 
     if (!updatedBooking) {
-      // Booking was cancelled concurrently before payment succeeded
+
       return res.status(409).json({
         success: false,
         message:
@@ -304,11 +280,6 @@ export const verifyPayment = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Handle Razorpay Webhook events idempotently with raw body signature verification
- * @route   POST /api/payments/webhook
- * @access  Public (Provider verification via x-razorpay-signature)
- */
 export const handleWebhook = async (req, res, next) => {
   try {
     const signature = req.headers['x-razorpay-signature'];
@@ -353,14 +324,13 @@ export const handleWebhook = async (req, res, next) => {
       req.headers['x-razorpay-event-id'] ||
       `${event}_${payload?.payment?.entity?.id || Date.now()}`;
 
-    // Extract Order & Payment IDs
     const orderId = payload?.payment?.entity?.order_id || payload?.order?.entity?.id;
     const paymentId = payload?.payment?.entity?.id;
 
     if (orderId) {
       const payment = await Payment.findOne({ orderId });
       if (payment) {
-        // Idempotency: Check if event already processed
+
         const alreadyProcessed = payment.webhookEvents.some((e) => e.eventId === eventId);
         if (alreadyProcessed) {
           return res.status(200).json({
@@ -369,7 +339,6 @@ export const handleWebhook = async (req, res, next) => {
           });
         }
 
-        // Process event types
         if (event === 'payment.captured' || event === 'order.paid') {
           payment.status = 'captured';
           if (paymentId) payment.paymentId = paymentId;

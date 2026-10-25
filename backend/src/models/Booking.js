@@ -154,7 +154,6 @@ const bookingSchema = new mongoose.Schema(
   }
 );
 
-// Indexes
 bookingSchema.index({ user: 1, createdAt: -1 });
 bookingSchema.index({ showtime: 1, status: 1 });
 bookingSchema.index(
@@ -162,7 +161,6 @@ bookingSchema.index(
   { unique: true, partialFilterExpression: { idempotencyKey: { $type: 'string' } } }
 );
 
-// Auto-generate bookingReference if not set
 bookingSchema.pre('validate', function () {
   if (!this.bookingReference) {
     const randomDigits = Math.floor(100000 + Math.random() * 900000);

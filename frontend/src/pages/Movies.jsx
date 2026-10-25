@@ -16,18 +16,16 @@ const Movies = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { searchQuery, setSearchQuery } = useBooking();
 
-  // Filter states
-  const [selectedCategory, setSelectedCategory] = useState('all'); // 'all' | 'bollywood' | 'hollywood'
+  const [selectedCategory, setSelectedCategory] = useState('all'); 
   const [selectedGenre, setSelectedGenre] = useState('all');
   const [selectedLanguage, setSelectedLanguage] = useState('All Languages');
   const [selectedFormat, setSelectedFormat] = useState('All Formats');
-  const [sortBy, setSortBy] = useState('popularity'); // 'popularity' | 'rating' | 'release'
-  const [trendCategory, setTrendCategory] = useState('all'); // 'all' | 'trending' | 'popular' | 'new-releases' | 'coming-soon' | 'audience-favourite' | 'hidden-gems'
+  const [sortBy, setSortBy] = useState('popularity'); 
+  const [trendCategory, setTrendCategory] = useState('all'); 
 
   const [liveMovies, setLiveMovies] = useState([]);
   const [isApiLive, setIsApiLive] = useState(false);
 
-  // Sync with URL query parameter
   useEffect(() => {
     const categoryParam = searchParams.get('category') || searchParams.get('industry');
     const filterParam = searchParams.get('filter');
@@ -55,7 +53,6 @@ const Movies = () => {
     }
   }, [searchParams]);
 
-  // Load from real backend Movies API
   useEffect(() => {
     let isMounted = true;
 
@@ -85,19 +82,18 @@ const Movies = () => {
     return () => { isMounted = false; };
   }, [selectedCategory, selectedGenre, selectedLanguage, selectedFormat, trendCategory, searchQuery, sortBy]);
 
-  // Base fallback source array determined strictly by category
   const sourceMovies = useMemo(() => {
     if (selectedCategory === 'bollywood') return BOLLYWOOD_MOVIES;
     if (selectedCategory === 'hollywood') return HOLLYWOOD_MOVIES;
     return MOVIES;
   }, [selectedCategory]);
 
-  // Fallback filtering if offline
   const fallbackFiltered = useMemo(() => {
     return sourceMovies.filter((movie) => {
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
-        const matchesTitle = movie.title.toLowerCase().includes(query);
+
+        const matchesTitle = movie.title.includes(query);
         const matchesGenre = movie.genres?.some(g => g.toLowerCase().includes(query));
         const matchesDirector = movie.director?.toLowerCase().includes(query);
         const matchesCast = movie.cast?.some(c => c.name.toLowerCase().includes(query));
@@ -110,7 +106,8 @@ const Movies = () => {
       return true;
     }).sort((a, b) => {
       if (sortBy === 'rating') return b.rating - a.rating;
-      if (sortBy === 'release') return new Date(b.releaseDate || '2024-01-01') - new Date(a.releaseDate || '2024-01-01');
+
+      if (sortBy === 'release') return new Date(a.releaseDate || '2024-01-01') - new Date(b.releaseDate || '2024-01-01');
       return b.rating * (b.tags?.includes('trending') ? 1.4 : 1) - a.rating * (a.tags?.includes('trending') ? 1.4 : 1);
     });
   }, [sourceMovies, searchQuery, trendCategory, selectedGenre, selectedLanguage, selectedFormat, sortBy]);
@@ -119,7 +116,8 @@ const Movies = () => {
 
   const handleResetFilters = () => {
     setSelectedCategory('all');
-    setSelectedGenre('all');
+
+    setSelectedGenre('');
     setSelectedLanguage('All Languages');
     setSelectedFormat('All Formats');
     setTrendCategory('all');
@@ -138,7 +136,7 @@ const Movies = () => {
 
   return (
     <div className="movies-page-root">
-      {/* Header Banner */}
+
       <div className="movies-header-banner">
         <div className="container movies-header-content">
           <div>
@@ -149,7 +147,6 @@ const Movies = () => {
             </p>
           </div>
 
-          {/* Quick Trend Category Tabs */}
           <div className="status-tabs-wrap">
             <button
               className={`status-tab-btn ${trendCategory === 'all' ? 'active' : ''}`}
@@ -206,7 +203,7 @@ const Movies = () => {
       </div>
 
       <div className="container movies-main-content">
-        {/* Category Switcher: All Movies, Bollywood, Hollywood */}
+
         <div className="movies-category-switch-wrap">
           <div className="movies-category-switch">
             <button
@@ -251,10 +248,9 @@ const Movies = () => {
           </div>
         </div>
 
-        {/* Filter Controls Bar */}
         <div className="filters-control-bar">
           <div className="filters-left">
-            {/* Genre Select */}
+
             <div className="select-pill-wrap">
               <select
                 value={selectedGenre}
@@ -268,7 +264,6 @@ const Movies = () => {
               </select>
             </div>
 
-            {/* Language Select */}
             <div className="select-pill-wrap">
               <select
                 value={selectedLanguage}
@@ -282,7 +277,6 @@ const Movies = () => {
               </select>
             </div>
 
-            {/* Format Select */}
             <div className="select-pill-wrap">
               <select
                 value={selectedFormat}
@@ -308,7 +302,6 @@ const Movies = () => {
             )}
           </div>
 
-          {/* Sort By Dropdown */}
           <div className="filters-right">
             <div className="sort-wrap">
               <ArrowUpDown size={15} color="#6B7280" />
@@ -327,7 +320,6 @@ const Movies = () => {
           </div>
         </div>
 
-        {/* Search Results Summary */}
         <div className="results-meta-bar">
           <span className="results-count">
             Showing <strong style={{ color: '#171923' }}>{filteredMovies.length}</strong> movies
@@ -341,7 +333,6 @@ const Movies = () => {
           </span>
         </div>
 
-        {/* Movie Grid */}
         <MovieGrid
           movies={filteredMovies}
           emptyMessage={

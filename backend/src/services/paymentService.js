@@ -1,9 +1,6 @@
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 
-/**
- * Checks whether Razorpay credentials are fully configured in the environment.
- */
 export const isPaymentConfigured = () => {
   const keyId = process.env.RAZORPAY_KEY_ID;
   const keySecret = process.env.RAZORPAY_KEY_SECRET;
@@ -15,10 +12,6 @@ export const isPaymentConfigured = () => {
   );
 };
 
-/**
- * Returns an instantiated Razorpay SDK client if credentials exist.
- * Fails safely if credentials are not configured.
- */
 export const getRazorpayClient = () => {
   if (!isPaymentConfigured()) {
     throw new Error(
@@ -32,10 +25,6 @@ export const getRazorpayClient = () => {
   });
 };
 
-/**
- * Creates an order on Razorpay.
- * If credentials are not set in test environment, supports injected mock client or throws.
- */
 export const createProviderOrder = async ({ amountInPaise, currency = 'INR', receipt, notes = {} }) => {
   const razorpay = getRazorpayClient();
   const order = await razorpay.orders.create({
@@ -47,10 +36,6 @@ export const createProviderOrder = async ({ amountInPaise, currency = 'INR', rec
   return order;
 };
 
-/**
- * Cryptographically verifies Razorpay Payment Signature using HMAC-SHA256 and constant-time comparison.
- * Algorithm: HMAC_SHA256(order_id + "|" + payment_id, key_secret) === signature
- */
 export const verifyPaymentSignature = ({ orderId, paymentId, signature, secret }) => {
   const keySecret = secret || process.env.RAZORPAY_KEY_SECRET;
   if (!keySecret) {
@@ -76,10 +61,6 @@ export const verifyPaymentSignature = ({ orderId, paymentId, signature, secret }
   return crypto.timingSafeEqual(expectedBuffer, signatureBuffer);
 };
 
-/**
- * Cryptographically verifies Razorpay Webhook Signature using HMAC-SHA256 and raw request body.
- * Algorithm: HMAC_SHA256(rawRequestBody, webhookSecret) === x-razorpay-signature header
- */
 export const verifyWebhookSignature = ({ rawBody, signature, secret }) => {
   const webhookSecret = secret || process.env.RAZORPAY_WEBHOOK_SECRET;
   if (!webhookSecret) {

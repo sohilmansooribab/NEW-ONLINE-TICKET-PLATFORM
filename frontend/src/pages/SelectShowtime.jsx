@@ -18,12 +18,11 @@ import { useBooking } from '../context/BookingContext';
 import { showtimesApi, moviesApi } from '../services/api';
 import './SelectShowtime.css';
 
-// Generate next 7 dates
 const generateDates = () => {
   const dates = [];
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  
+
   const today = new Date();
   for (let i = 0; i < 7; i++) {
     const d = new Date();
@@ -53,7 +52,6 @@ const SelectShowtime = () => {
   const [formatFilter, setFormatFilter] = useState('ALL');
   const [timeFilter, setTimeFilter] = useState('ALL');
 
-  // Movie state with API loader & fallback
   const [movie, setMovie] = useState(() => 
     MOVIES.find(m => m.id === movieId || m.slug === movieId || m._id === movieId) || activeBooking?.movie || MOVIES[0]
   );
@@ -61,7 +59,6 @@ const SelectShowtime = () => {
   const [isLiveApi, setIsLiveApi] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Fetch movie details from API
   useEffect(() => {
     let isMounted = true;
     moviesApi.getMovie(movieId)
@@ -77,7 +74,6 @@ const SelectShowtime = () => {
     return () => { isMounted = false; };
   }, [movieId]);
 
-  // Fetch live showtimes from backend
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
@@ -91,7 +87,7 @@ const SelectShowtime = () => {
           setApiShowtimes(res.showtimes);
           setIsLiveApi(true);
         } else {
-          // If no showtimes specifically for this city/movie, query all showtimes
+
           showtimesApi.getShowtimes({ limit: 50 })
             .then(allRes => {
               const shows = allRes?.showtimes || allRes?.data || [];
@@ -121,7 +117,6 @@ const SelectShowtime = () => {
     return () => { isMounted = false; };
   }, [movieId, selectedCity, movie?._id, movie?.slug]);
 
-  // Transform backend showtimes into grouped venue/screen layout
   const displayedTheatres = useMemo(() => {
     if (!isLiveApi || apiShowtimes.length === 0) {
       return THEATRES;
@@ -194,7 +189,7 @@ const SelectShowtime = () => {
       date: selectedDateObj.fullDateStr,
       time: showtime.time,
       format: screen.format,
-      selectedSeats: [], // reset seats when new showtime selected
+      selectedSeats: [], 
       hold: null,
       authoritativePricing: null,
     });
@@ -207,7 +202,7 @@ const SelectShowtime = () => {
 
   return (
     <div className="select-showtime-root">
-      {/* Sticky Mini Header for Movie */}
+
       <div className="showtime-movie-bar">
         <div className="container movie-bar-content">
           <div className="movie-bar-left">
@@ -242,7 +237,7 @@ const SelectShowtime = () => {
       </div>
 
       <div className="container showtime-main">
-        {/* Date Selector Row */}
+
         <div className="date-selector-wrapper">
           <div className="date-selector-scroll">
             {datesList.map((d) => (
@@ -259,7 +254,6 @@ const SelectShowtime = () => {
           </div>
         </div>
 
-        {/* Filters Bar: Formats and Time */}
         <div className="showtime-filters-bar">
           <div className="filter-group">
             <span className="filter-label">Experience:</span>
@@ -268,7 +262,8 @@ const SelectShowtime = () => {
                 <button
                   key={fmt}
                   className={`sub-filter-pill ${formatFilter === fmt ? 'active' : ''}`}
-                  onClick={() => setFormatFilter(fmt)}
+
+                  onClick={() => setFormatFilter(fmt === 'ALL' ? 'all' : fmt)}
                 >
                   {fmt}
                 </button>
@@ -283,10 +278,9 @@ const SelectShowtime = () => {
           </div>
         </div>
 
-        {/* Theatres List */}
         <div className="theatres-list-container">
           {displayedTheatres.map((theatre) => {
-            // Filter screens if formatFilter is set
+
             const matchingScreens = (theatre.screens || []).filter(screen => {
               if (formatFilter === 'ALL') return true;
               return screen.format?.toLowerCase().includes(formatFilter.toLowerCase());
@@ -315,14 +309,12 @@ const SelectShowtime = () => {
                   )}
                 </div>
 
-                {/* Amenities Badges */}
                 <div className="theatre-amenities-row">
                   {(theatre.amenities || []).map((a, i) => (
                     <span key={i} className="badge badge-dark amenity-tag">{a}</span>
                   ))}
                 </div>
 
-                {/* Screens and Showtimes */}
                 <div className="theatre-screens-wrap">
                   {matchingScreens.map((screen) => (
                     <div key={screen.id || screen._id} className="screen-row">

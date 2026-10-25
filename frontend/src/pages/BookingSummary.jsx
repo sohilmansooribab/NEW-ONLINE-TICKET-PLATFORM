@@ -49,16 +49,13 @@ const BookingSummary = () => {
 
   const pricing = calculatePricing();
 
-  // Contact form state
   const [contactName, setContactName] = useState(currentUser?.name || 'Aarav Sharma');
   const [contactEmail, setContactEmail] = useState(currentUser?.email || 'aarav.sharma@example.com');
   const [contactPhone, setContactPhone] = useState('+91 98765 43210');
 
-  // Promo code state
   const [promoInput, setPromoInput] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('upi'); // 'upi' | 'card' | 'wallet'
+  const [paymentMethod, setPaymentMethod] = useState('upi'); 
 
-  // Hold timer countdown
   const [timeLeftSeconds, setTimeLeftSeconds] = useState(() => {
     if (activeBooking.hold?.expiresAt) {
       const diff = Math.max(0, Math.floor((new Date(activeBooking.hold.expiresAt) - new Date()) / 1000));
@@ -67,7 +64,6 @@ const BookingSummary = () => {
     return 300;
   });
 
-  // Processing & Payment state
   const [isProcessing, setIsProcessing] = useState(false);
   const [gatewayUnconfigured, setGatewayUnconfigured] = useState(false);
   const [pendingBookingRecord, setPendingBookingRecord] = useState(null);
@@ -121,7 +117,7 @@ const BookingSummary = () => {
     setGatewayUnconfigured(false);
 
     try {
-      // Step 1: Create booking on backend from active seat hold with Idempotency Key
+
       const idempotencyKey = window.crypto?.randomUUID 
         ? window.crypto.randomUUID() 
         : `cnb-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
@@ -139,12 +135,11 @@ const BookingSummary = () => {
       const booking = bookingRes.booking;
       const bookingMongoId = booking._id || booking.id;
 
-      // Step 2: Request Razorpay payment order from backend
       try {
         const orderRes = await paymentsApi.createOrder(bookingMongoId);
 
         if (orderRes?.orderId && orderRes?.keyId) {
-          // Razorpay gateway is configured, launch checkout script
+
           await loadRazorpayScript();
 
           if (!window.Razorpay) {
@@ -168,7 +163,7 @@ const BookingSummary = () => {
             theme: { color: '#E63946' },
             handler: async (paymentResp) => {
               try {
-                // Step 3: Cryptographic signature verification on backend
+
                 const verifyRes = await paymentsApi.verifyPayment({
                   bookingId: bookingMongoId,
                   razorpay_order_id: paymentResp.razorpay_order_id,
@@ -198,7 +193,7 @@ const BookingSummary = () => {
           return;
         }
       } catch (payErr) {
-        // If payment gateway keys are not configured in .env (HTTP 503)
+
         if (payErr.status === 503 || payErr.code === 'PAYMENT_GATEWAY_NOT_CONFIGURED') {
           setGatewayUnconfigured(true);
           setPendingBookingRecord(booking);
@@ -213,7 +208,7 @@ const BookingSummary = () => {
       if (err.status === 409) {
         showToast('Hold expired or seats no longer available. Please select seats again.', 'error');
       } else {
-        // Fallback local confirmation if offline
+
         const confirmedRecord = confirmBooking({
           name: contactName,
           email: contactEmail,
@@ -226,7 +221,6 @@ const BookingSummary = () => {
     }
   };
 
-  // Test Mode confirmation when Razorpay credentials are not yet configured in .env
   const handleTestModeConfirm = async () => {
     if (!pendingBookingRecord) return;
     setIsProcessing(true);
@@ -256,7 +250,7 @@ const BookingSummary = () => {
   return (
     <div className="booking-summary-root">
       <div className="container summary-page-container">
-        {/* Hold Expiration Timer Banner */}
+
         {activeBooking.hold?.expiresAt && (
           <div className="demo-notice-bar" style={{ background: timeLeftSeconds < 60 ? 'rgba(230, 57, 70, 0.15)' : 'rgba(59, 130, 246, 0.12)', borderColor: timeLeftSeconds < 60 ? '#E63946' : '#3B82F6' }}>
             <Clock size={18} color={timeLeftSeconds < 60 ? '#E63946' : '#3B82F6'} />
@@ -269,7 +263,6 @@ const BookingSummary = () => {
           </div>
         )}
 
-        {/* Missing Gateway Configuration Banner */}
         {gatewayUnconfigured && (
           <div className="demo-notice-bar" style={{ background: 'rgba(245, 158, 11, 0.15)', borderColor: '#F59E0B', display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'flex-start' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -294,11 +287,10 @@ const BookingSummary = () => {
         )}
 
         <div className="summary-two-col-layout">
-          {/* Left Column: Order Review & Payment Options */}
+
           <div className="summary-left-pane">
             <h1 className="summary-page-heading">Review & Confirm Booking</h1>
 
-            {/* Movie & Theatre Card */}
             <div className="summary-section-card">
               <div className="sum-movie-preview">
                 <img 
@@ -327,7 +319,6 @@ const BookingSummary = () => {
                 </div>
               </div>
 
-              {/* Seats Display */}
               <div className="sum-seats-display-strip">
                 <div className="sum-seats-left">
                   <span className="sum-strip-label">Reserved Seats:</span>
@@ -349,7 +340,6 @@ const BookingSummary = () => {
               </div>
             </div>
 
-            {/* Contact Details Card */}
             <div className="summary-section-card">
               <h3 className="card-section-title">Ticket Delivery Details</h3>
               <p className="card-section-sub">
@@ -395,7 +385,6 @@ const BookingSummary = () => {
               </div>
             </div>
 
-            {/* Payment Method Selector */}
             <div className="summary-section-card">
               <h3 className="card-section-title">Payment Mode (Razorpay Test Mode)</h3>
               <div className="payment-options-grid">
@@ -456,12 +445,10 @@ const BookingSummary = () => {
             </div>
           </div>
 
-          {/* Right Column: Order Summary & Checkout Action */}
           <div className="summary-right-pane">
             <div className="order-summary-box">
               <h3 className="order-summary-title">Payment Summary</h3>
 
-              {/* Promo Input */}
               <div className="promo-box-wrapper">
                 {activeBooking.appliedPromo ? (
                   <div className="applied-promo-pill">
@@ -497,7 +484,6 @@ const BookingSummary = () => {
                 )}
               </div>
 
-              {/* Price Breakdown */}
               <div className="pricing-lines-stack">
                 <div className="line-item">
                   <span className="line-label">
@@ -526,7 +512,6 @@ const BookingSummary = () => {
                 </div>
               </div>
 
-              {/* Pay Button */}
               <button 
                 type="button" 
                 className="btn btn-primary btn-lg checkout-pay-btn"
@@ -555,7 +540,6 @@ const BookingSummary = () => {
         </div>
       </div>
 
-      {/* Confirmation Success Modal */}
       {confirmedBookingData && (
         <div className="confirm-modal-backdrop">
           <div className="confirm-modal-content animate-fade-in">
@@ -569,7 +553,6 @@ const BookingSummary = () => {
               </p>
             </div>
 
-            {/* Visual E-Ticket Card */}
             <div className="ticket-visual-card">
               <div className="ticket-visual-top">
                 <div className="ticket-ref-box">
@@ -606,7 +589,6 @@ const BookingSummary = () => {
                 </div>
               </div>
 
-              {/* QR Code Section */}
               <div className="ticket-qr-section">
                 <img 
                   src={confirmedBookingData.qrCode || `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${confirmedBookingData.bookingReference || confirmedBookingData.id}`} 
@@ -617,7 +599,6 @@ const BookingSummary = () => {
               </div>
             </div>
 
-            {/* Modal Actions */}
             <div className="confirm-modal-actions">
               <button 
                 type="button" 

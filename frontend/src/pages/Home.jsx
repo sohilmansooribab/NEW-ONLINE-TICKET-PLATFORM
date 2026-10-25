@@ -37,7 +37,7 @@ const Home = () => {
   const navigate = useNavigate();
   const { selectedCity, setSelectedCity } = useBooking();
   const [activeGenre, setActiveGenre] = useState('all');
-  const [activeCategory, setActiveCategory] = useState('all'); // 'all' | 'bollywood' | 'hollywood'
+  const [activeCategory, setActiveCategory] = useState('all'); 
   const [liveMovies, setLiveMovies] = useState([]);
   const [isApiLive, setIsApiLive] = useState(false);
   const [apiError, setApiError] = useState(null);
@@ -59,7 +59,6 @@ const Home = () => {
     return () => { isMounted = false; };
   }, []);
 
-  // Determine active movie source: prioritize live backend movies, fallback to curated mock data
   const baseMovies = liveMovies.length > 0 ? liveMovies : MOVIES;
   const bollywoodMovies = liveMovies.length > 0 
     ? liveMovies.filter(m => m.industry === 'bollywood') 
@@ -68,7 +67,6 @@ const Home = () => {
     ? liveMovies.filter(m => m.industry === 'hollywood') 
     : HOLLYWOOD_MOVIES;
 
-  // Filter movie sections based on tags with fallback to ensure rich display
   const trendingFiltered = baseMovies.filter(m => m.tags?.includes('trending'));
   const trendingNow = trendingFiltered.length > 0 ? trendingFiltered : MOVIES.filter(m => m.tags?.includes('trending'));
 
@@ -87,10 +85,8 @@ const Home = () => {
   const gemsFiltered = baseMovies.filter(m => m.tags?.includes('hidden-gems'));
   const hiddenGems = gemsFiltered.length > 0 ? gemsFiltered : MOVIES.filter(m => m.tags?.includes('hidden-gems'));
 
-  // City display
   const cityName = CITIES.find(c => c.id === selectedCity)?.name || 'Delhi-NCR';
 
-  // Category & Genre filter for discovery grid
   const filteredDiscovery = (
     activeCategory === 'bollywood' 
       ? bollywoodMovies 
@@ -109,10 +105,9 @@ const Home = () => {
 
   return (
     <div className="home-root">
-      {/* 1. Dynamic Promotional Hero Slider */}
+
       <HeroBanner />
 
-      {/* Live Data / Verification Transparency Strip */}
       <div className="container" style={{ marginTop: '1.25rem', marginBottom: '0.5rem' }}>
         <div className="data-transparency-pill">
           <div className="data-source-status">
@@ -128,7 +123,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* 2. Trending Now Section */}
       <MovieCarousel
         title="Trending Now"
         tagline="WHAT'S BLOWING UP"
@@ -138,7 +132,6 @@ const Home = () => {
         bgType="white"
       />
 
-      {/* 3. Popular This Week Section */}
       <MovieCarousel
         title="Popular This Week"
         tagline="TOP BOX OFFICE MOMENTUM"
@@ -148,7 +141,6 @@ const Home = () => {
         bgType="light"
       />
 
-      {/* 4. New Releases Section */}
       <MovieCarousel
         title="New Releases"
         tagline="JUST HIT THEATRES"
@@ -158,7 +150,6 @@ const Home = () => {
         bgType="white"
       />
 
-      {/* 5. Bollywood Movies Section (Dedicated Horizontal Carousel) */}
       <MovieCarousel
         title="Bollywood Movies"
         tagline="HINDI CINEMA & DESI BLOCKBUSTERS"
@@ -168,7 +159,6 @@ const Home = () => {
         bgType="light"
       />
 
-      {/* 6. Hollywood Movies Section (Dedicated Horizontal Carousel) */}
       <MovieCarousel
         title="Hollywood Movies"
         tagline="GLOBAL BLOCKBUSTERS & SPECTACLES"
@@ -178,7 +168,6 @@ const Home = () => {
         bgType="white"
       />
 
-      {/* 7. Live Events & Entertainment Section */}
       <section id="events-section" className="section-wrapper events-showcase-section">
         <div className="container">
           <div className="section-header">
@@ -203,7 +192,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 8. Promotional CinePass Banner */}
       <section className="container promo-banner-wrapper">
         <div className="promo-banner-card">
           <div className="promo-content">
@@ -232,7 +220,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 9. Coming Soon Section */}
       <MovieCarousel
         title="Coming Soon"
         tagline="HIGHLY ANTICIPATED PREMIERES"
@@ -242,7 +229,6 @@ const Home = () => {
         bgType="light"
       />
 
-      {/* 10. Audience Favourites Section */}
       <MovieCarousel
         title="Audience Favourites"
         tagline="CROWD PLEASERS & TOP RATED"
@@ -252,7 +238,6 @@ const Home = () => {
         bgType="white"
       />
 
-      {/* 11. Hidden Gems Section */}
       <MovieCarousel
         title="Hidden Gems"
         tagline="CRITICS' TREASURES & INDIE MASTERPIECES"
@@ -262,7 +247,6 @@ const Home = () => {
         bgType="light"
       />
 
-      {/* 12. Explore & Filter by Category and Genre */}
       <section className="section-wrapper genre-browse-section">
         <div className="container">
           <div className="section-header">
@@ -281,7 +265,6 @@ const Home = () => {
             </Link>
           </div>
 
-          {/* Category Filter Switch: All Movies, Bollywood, Hollywood */}
           <div className="home-category-filters-wrap">
             <div className="home-category-filters">
               <button
@@ -310,7 +293,6 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Genre Filter Pills */}
           <GenreFilter selectedGenre={activeGenre} onSelectGenre={setActiveGenre} />
 
           <div className="grid-movies">
@@ -323,7 +305,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 11. Popular Multiplexes in Selected City */}
       <section className="section-wrapper city-experience-section">
         <div className="container">
           <div className="section-header">
@@ -395,7 +376,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 12. CineBook Experience Pillars */}
       <section className="section-wrapper features-strip-section">
         <div className="container">
           <div className="features-strip-grid">

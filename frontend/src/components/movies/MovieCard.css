@@ -1,4 +1,4 @@
-/* Movie Card Styles — Premium White Theme */
+
 .movie-card {
   position: relative;
   background-color: #FFFFFF;
@@ -19,7 +19,6 @@
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
 }
 
-/* Poster Wrap */
 .movie-card-poster-wrap {
   position: relative;
   width: 100%;
@@ -39,7 +38,6 @@
   transform: scale(1.04);
 }
 
-/* Top Badges */
 .poster-top-badges {
   position: absolute;
   top: 10px;
@@ -69,7 +67,6 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Rating Floating Pill */
 .poster-rating-pill {
   position: absolute;
   bottom: 10px;
@@ -97,7 +94,6 @@
   color: var(--text-secondary);
 }
 
-/* Hover Overlay */
 .poster-hover-overlay {
   position: absolute;
   inset: 0;
@@ -151,7 +147,6 @@
   border-color: #FFFFFF;
 }
 
-/* Info Section */
 .movie-card-info {
   padding: 1rem;
   display: flex;
@@ -228,7 +223,6 @@
   font-weight: 700;
 }
 
-/* Direct Action Row on Card */
 .movie-card-action-bar {
   margin-top: 0.45rem;
 }
@@ -279,4 +273,3 @@
   background-color: #6B7280;
   border-color: #6B7280;
 }
-

@@ -1,20 +1,11 @@
-/**
- * CineBook Frontend Centralized API Client
- * Connects React UI to the Express/MongoDB Backend Service.
- */
 
-// Ensure API_BASE_URL is trimmed, has no trailing slash, and always ends with /api
 let rawBase = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api').trim();
-rawBase = rawBase.replace(/\/+$/, ''); // Remove trailing slashes
+rawBase = rawBase.replace(/\/+$/, ''); 
 if (!rawBase.endsWith('/api')) {
   rawBase = `${rawBase}/api`;
 }
 const API_BASE_URL = rawBase;
 
-
-/**
- * Base HTTP request wrapper with Bearer token authentication and error normalization.
- */
 async function request(endpoint, options = {}) {
   const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
 
@@ -23,13 +14,11 @@ async function request(endpoint, options = {}) {
     ...(options.headers || {}),
   };
 
-  // Attach token if present
   const token = localStorage.getItem('cinebook_token');
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  // Attach idempotency key if provided
   if (options.idempotencyKey) {
     headers['Idempotency-Key'] = options.idempotencyKey;
   }
@@ -64,13 +53,13 @@ async function request(endpoint, options = {}) {
   }
 
   if (!response.ok) {
-    const message = (data && data.message) || `Server error (${response.status}): ${response.statusText}`;
+
+    const message = (data && data.msg) || `Server error (${response.status}): ${response.statusText}`;
     const error = new Error(message);
     error.status = response.status;
     error.code = data?.code;
     error.data = data;
 
-    // Handle token expiry / invalidation
     if (response.status === 401 && !endpoint.includes('/auth/login') && !endpoint.includes('/auth/signup')) {
       localStorage.removeItem('cinebook_token');
       localStorage.removeItem('cinebook_user');
@@ -83,18 +72,12 @@ async function request(endpoint, options = {}) {
   return data;
 }
 
-// ----------------------------------------------------
-// 1. AUTHENTICATION SERVICE
-// ----------------------------------------------------
 export const authApi = {
   signup: (userData) => request('/auth/signup', { method: 'POST', body: userData }),
   login: (credentials) => request('/auth/login', { method: 'POST', body: credentials }),
   getMe: () => request('/auth/me', { method: 'GET' }),
 };
 
-// ----------------------------------------------------
-// 2. MOVIES SERVICE
-// ----------------------------------------------------
 export const moviesApi = {
   getMovies: (params = {}) => {
     const searchParams = new URLSearchParams();
@@ -111,9 +94,6 @@ export const moviesApi = {
   getMovie: (idOrSlug) => request(`/movies/${idOrSlug}`, { method: 'GET' }),
 };
 
-// ----------------------------------------------------
-// 3. THEATRES & SCREENS SERVICE
-// ----------------------------------------------------
 export const theatresApi = {
   getTheatres: (params = {}) => {
     const searchParams = new URLSearchParams();
@@ -129,9 +109,6 @@ export const theatresApi = {
   getScreens: (theatreId) => request(`/theatres/${theatreId}/screens`, { method: 'GET' }),
 };
 
-// ----------------------------------------------------
-// 4. SHOWTIMES & LIVE SEATS SERVICE
-// ----------------------------------------------------
 export const showtimesApi = {
   getShowtimes: (params = {}) => {
     const searchParams = new URLSearchParams();
@@ -147,9 +124,6 @@ export const showtimesApi = {
   getShowtimeSeats: (id) => request(`/showtimes/${id}/seats`, { method: 'GET' }),
 };
 
-// ----------------------------------------------------
-// 5. SEAT HOLDS & BOOKINGS SERVICE
-// ----------------------------------------------------
 export const bookingsApi = {
   holdSeats: ({ showtimeId, seats, durationSeconds = 300, promoCode }) =>
     request('/bookings/hold', {
@@ -184,9 +158,6 @@ export const bookingsApi = {
     }),
 };
 
-// ----------------------------------------------------
-// 6. PAYMENTS SERVICE (Razorpay Order & Verification)
-// ----------------------------------------------------
 export const paymentsApi = {
   createOrder: (bookingId) =>
     request('/payments/create-order', {
@@ -201,9 +172,6 @@ export const paymentsApi = {
     }),
 };
 
-// ----------------------------------------------------
-// 7. ADMIN MANAGEMENT & ANALYTICS SERVICE
-// ----------------------------------------------------
 export const adminApi = {
   getUsers: (params = {}) => {
     const searchParams = new URLSearchParams();
@@ -240,9 +208,6 @@ export const adminApi = {
   getAnalytics: () => request('/admin/analytics', { method: 'GET' }),
 };
 
-// ----------------------------------------------------
-// 8. ORGANIZER VENUE & SHOWTIMES SERVICE
-// ----------------------------------------------------
 export const organizerApi = {
   getProfile: () => request('/organizer/profile', { method: 'GET' }),
   getTheatres: () => request('/organizer/theatres', { method: 'GET' }),

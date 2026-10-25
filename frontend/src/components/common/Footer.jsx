@@ -20,7 +20,7 @@ const Footer = () => {
 
   return (
     <footer className="footer-root">
-      {/* Newsletter Section */}
+
       <div className="newsletter-banner">
         <div className="container newsletter-content">
           <div className="newsletter-text">
@@ -48,10 +48,9 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Main Footer Content */}
       <div className="container footer-main">
         <div className="footer-grid">
-          {/* Brand Info */}
+
           <div className="footer-col brand-col">
             <Link to="/" className="footer-brand">
               <div className="brand-icon-wrapper">
@@ -76,7 +75,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Quick Links */}
           <div className="footer-col">
             <h4 className="footer-heading">Now Showing</h4>
             <ul className="footer-links">
@@ -89,7 +87,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Cinematic Formats */}
           <div className="footer-col">
             <h4 className="footer-heading">Experiences</h4>
             <ul className="footer-links">

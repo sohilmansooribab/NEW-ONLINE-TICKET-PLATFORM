@@ -87,10 +87,9 @@ const holdSchema = new mongoose.Schema(
   }
 );
 
-// Indexes
 holdSchema.index({ showtime: 1, status: 1 });
 holdSchema.index({ user: 1, status: 1 });
-holdSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 86400 }); // Cleanup stale documents after 24 hours
+holdSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 86400 }); 
 
 const Hold = mongoose.model('Hold', holdSchema);
 export default Hold;

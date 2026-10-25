@@ -33,7 +33,7 @@ const MovieCard = ({ movie }) => {
 
   return (
     <div className="movie-card" onClick={handleCardClick} role="button" tabIndex={0}>
-      {/* Poster Container */}
+
       <div className="movie-card-poster-wrap">
         <img
           src={imgSrc}
@@ -43,7 +43,6 @@ const MovieCard = ({ movie }) => {
           onError={() => setImgSrc(fallbackPoster)}
         />
 
-        {/* Top Badges */}
         <div className="poster-top-badges">
           {movie.formats && movie.formats[0] && (
             <span className="badge badge-dark poster-format-badge">
@@ -57,7 +56,6 @@ const MovieCard = ({ movie }) => {
           )}
         </div>
 
-        {/* Rating Floating Pill */}
         <div className="poster-rating-pill">
           <Star size={13} fill="#F59E0B" color="#F59E0B" />
           <span className="rating-score">
@@ -66,7 +64,6 @@ const MovieCard = ({ movie }) => {
           {movie.voteCount && <span className="rating-votes">({movie.voteCount})</span>}
         </div>
 
-        {/* Hover Overlay with Action Buttons */}
         <div className="poster-hover-overlay">
           <div className="poster-overlay-content">
             <span className="overlay-duration">
@@ -105,12 +102,11 @@ const MovieCard = ({ movie }) => {
         </div>
       </div>
 
-      {/* Info Content */}
       <div className="movie-card-info">
         <h3 className="movie-card-title" title={movie.title}>
           {movie.title}
         </h3>
-        
+
         <div className="movie-card-meta">
           <span className="movie-card-genres">
             {movie.genres ? movie.genres.slice(0, 2).join(' • ') : 'Action'}
@@ -134,7 +130,6 @@ const MovieCard = ({ movie }) => {
           )}
         </div>
 
-        {/* Action Button Row */}
         <div className="movie-card-action-bar">
           {isBookingSupported ? (
             <button

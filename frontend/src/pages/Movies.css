@@ -1,4 +1,4 @@
-/* Movies Page Styles — Premium White Theme */
+
 .movies-page-root {
   min-height: 100vh;
   padding-bottom: 5rem;
@@ -36,7 +36,6 @@
   max-width: 540px;
 }
 
-/* Status Tabs */
 .status-tabs-wrap {
   display: flex;
   background-color: #FFFFFF;
@@ -65,12 +64,10 @@
   box-shadow: 0 2px 8px var(--primary-glow);
 }
 
-/* Filters Control Bar */
 .movies-main-content {
   padding-top: 1.75rem;
 }
 
-/* Category Switcher */
 .movies-category-switch-wrap {
   margin-bottom: 1.5rem;
   display: flex;
@@ -194,7 +191,6 @@
   box-shadow: none;
 }
 
-/* Results Meta Bar */
 .results-meta-bar {
   display: flex;
   align-items: center;

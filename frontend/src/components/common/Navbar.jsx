@@ -38,7 +38,6 @@ const Navbar = () => {
   const cityRef = useRef(null);
   const userRef = useRef(null);
 
-  // Close dropdowns on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (cityRef.current && !cityRef.current.contains(e.target)) {
@@ -52,7 +51,6 @@ const Navbar = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Sync local search with global
   useEffect(() => {
     setLocalSearch(searchQuery);
   }, [searchQuery]);
@@ -63,6 +61,7 @@ const Navbar = () => {
     if (location.pathname !== '/movies') {
       navigate('/movies');
     }
+
   };
 
   const handleCitySelect = (cityId) => {
@@ -77,7 +76,7 @@ const Navbar = () => {
   return (
     <header className="navbar-root">
       <div className="navbar-container">
-        {/* Left: Brand Logo & City */}
+
         <div className="navbar-left">
           <Link to="/" className="navbar-brand">
             <div className="brand-icon-wrapper">
@@ -89,7 +88,6 @@ const Navbar = () => {
             </span>
           </Link>
 
-          {/* City Selector */}
           <div className="city-selector-wrap" ref={cityRef}>
             <button 
               className={`city-btn ${cityDropdownOpen ? 'active' : ''}`}
@@ -124,7 +122,6 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Center: Search Bar */}
         <div className="navbar-center">
           <form onSubmit={handleSearchSubmit} className="nav-search-form">
             <Search size={18} className="search-icon" />
@@ -153,7 +150,6 @@ const Navbar = () => {
           </form>
         </div>
 
-        {/* Right: Navigation Links & User Menu */}
         <div className="navbar-right">
           <nav className="nav-links-desktop">
             <Link to="/" className={`nav-link ${isActive('/') ? 'active' : ''}`}>
@@ -176,7 +172,6 @@ const Navbar = () => {
             </Link>
           </nav>
 
-          {/* User Profile or Login */}
           <div className="user-menu-wrap" ref={userRef}>
             {currentUser ? (
               <div className="user-profile-btn-wrap">
@@ -264,7 +259,6 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile Menu Toggle */}
           <button 
             className="mobile-toggle-btn"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -275,7 +269,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="mobile-drawer">
           <form onSubmit={handleSearchSubmit} className="mobile-search-form">

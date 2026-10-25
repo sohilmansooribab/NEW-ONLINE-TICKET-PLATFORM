@@ -81,14 +81,12 @@ const theatreSchema = new mongoose.Schema(
   }
 );
 
-// Virtual for populated screens
 theatreSchema.virtual('screens', {
   ref: 'Screen',
   localField: '_id',
   foreignField: 'theatre',
 });
 
-// Auto-generate slug if not provided
 theatreSchema.pre('validate', function () {
   if (this.name && !this.slug) {
     this.slug = this.name

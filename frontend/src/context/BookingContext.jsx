@@ -5,15 +5,13 @@ import { authApi, bookingsApi } from '../services/api';
 const BookingContext = createContext();
 
 export const BookingProvider = ({ children }) => {
-  // City selection
+
   const [selectedCity, setSelectedCity] = useState(() => {
     return localStorage.getItem('cinebook_city') || 'delhi';
   });
 
-  // Global search query
   const [searchQuery, setSearchQuery] = useState('');
 
-  // User state
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const saved = localStorage.getItem('cinebook_user');
@@ -25,7 +23,6 @@ export const BookingProvider = ({ children }) => {
 
   const [authLoading, setAuthLoading] = useState(true);
 
-  // Bookings list (backed by real API with fallback)
   const [bookings, setBookings] = useState(() => {
     try {
       const saved = localStorage.getItem('cinebook_bookings');
@@ -35,7 +32,6 @@ export const BookingProvider = ({ children }) => {
     }
   });
 
-  // Active booking in-progress
   const [activeBooking, setActiveBooking] = useState({
     movie: MOVIES[0],
     theatre: THEATRES[0],
@@ -44,13 +40,12 @@ export const BookingProvider = ({ children }) => {
     date: 'Fri, 24 Oct 2026',
     time: '06:15 PM',
     format: 'IMAX 3D',
-    selectedSeats: [], // [{ id: 'F7', seatId: 'F7', row: 'F', col: 7, tier: 'Premium', price: 320 }]
+    selectedSeats: [], 
     appliedPromo: null,
-    hold: null, // { holdId, expiresAt, expiresInSeconds }
+    hold: null, 
     authoritativePricing: null,
   });
 
-  // Toast notification state
   const [toast, setToast] = useState(null);
 
   const showToast = useCallback((message, type = 'success') => {
@@ -60,17 +55,14 @@ export const BookingProvider = ({ children }) => {
     }, 4200);
   }, []);
 
-  // Save selected city
   useEffect(() => {
     localStorage.setItem('cinebook_city', selectedCity);
   }, [selectedCity]);
 
-  // Sync bookings cache
   useEffect(() => {
     localStorage.setItem('cinebook_bookings', JSON.stringify(bookings));
   }, [bookings]);
 
-  // Verify stored session with backend on load
   useEffect(() => {
     const token = localStorage.getItem('cinebook_token');
     if (!token) {
@@ -88,7 +80,7 @@ export const BookingProvider = ({ children }) => {
       })
       .catch((err) => {
         console.warn('Session verification notice:', err.message);
-        // If 401, token is invalid or expired
+
         if (err.status === 401) {
           localStorage.removeItem('cinebook_token');
           localStorage.removeItem('cinebook_user');
@@ -100,7 +92,6 @@ export const BookingProvider = ({ children }) => {
       });
   }, []);
 
-  // Refresh customer's bookings from backend
   const refreshBookings = useCallback(async () => {
     const token = localStorage.getItem('cinebook_token');
     if (!token) return;
@@ -108,7 +99,7 @@ export const BookingProvider = ({ children }) => {
     try {
       const res = await bookingsApi.getMyBookings();
       if (res && res.bookings) {
-        // Normalize backend booking objects for UI compatibility
+
         const normalized = res.bookings.map((b) => ({
           id: b.bookingReference || b.id || b._id,
           _id: b._id || b.id,
@@ -146,16 +137,14 @@ export const BookingProvider = ({ children }) => {
     }
   }, []);
 
-  // Fetch bookings when user logs in
   useEffect(() => {
     if (currentUser) {
       refreshBookings();
     }
   }, [currentUser, refreshBookings]);
 
-  // Real backend login handler
   const login = async (credentials) => {
-    // If credentials is an object with email & password, call real API
+
     if (credentials?.email && credentials?.password) {
       const res = await authApi.login({
         email: credentials.email,
@@ -172,7 +161,6 @@ export const BookingProvider = ({ children }) => {
       throw new Error(res?.message || 'Login failed');
     }
 
-    // Direct user object fallback (for compatibility)
     if (credentials?.role) {
       setCurrentUser(credentials);
       localStorage.setItem('cinebook_user', JSON.stringify(credentials));
@@ -181,7 +169,6 @@ export const BookingProvider = ({ children }) => {
     }
   };
 
-  // Real backend signup handler
   const signup = async (userData) => {
     const res = await authApi.signup(userData);
     if (res?.token && res?.user) {
@@ -194,7 +181,6 @@ export const BookingProvider = ({ children }) => {
     throw new Error(res?.message || 'Signup failed');
   };
 
-  // Logout handler
   const logout = () => {
     localStorage.removeItem('cinebook_token');
     localStorage.removeItem('cinebook_user');
@@ -202,7 +188,6 @@ export const BookingProvider = ({ children }) => {
     showToast('You have been logged out.');
   };
 
-  // Start booking flow for a specific movie & showtime
   const startBooking = (movie, theatre = null, date = null, time = null, format = null, showtime = null) => {
     const defaultTheatre = theatre || THEATRES[0];
     const defaultScreen = defaultTheatre?.screens?.[0] || { name: 'Audi 1', format: 'IMAX Laser' };
@@ -224,12 +209,10 @@ export const BookingProvider = ({ children }) => {
     });
   };
 
-  // Update parts of active booking
   const updateBookingState = (updates) => {
     setActiveBooking((prev) => ({ ...prev, ...updates }));
   };
 
-  // Seat toggle helper
   const toggleSeat = (seat) => {
     const seatId = seat.id || seat.seatId;
     setActiveBooking((prev) => {
@@ -238,7 +221,8 @@ export const BookingProvider = ({ children }) => {
       if (exists) {
         newSeats = prev.selectedSeats.filter((s) => (s.id || s.seatId) !== seatId);
       } else {
-        if (prev.selectedSeats.length >= 8) {
+
+        if (prev.selectedSeats.length >= 7) {
           showToast('Maximum 8 tickets allowed per booking.', 'warning');
           return prev;
         }
@@ -248,7 +232,6 @@ export const BookingProvider = ({ children }) => {
     });
   };
 
-  // Apply promo code
   const applyPromo = (codeStr) => {
     const found = PROMO_CODES.find((p) => p.code.toLowerCase() === codeStr.trim().toLowerCase());
     if (found) {
@@ -266,9 +249,8 @@ export const BookingProvider = ({ children }) => {
     showToast('Promo code removed.');
   };
 
-  // Authoritative price calculations
   const calculatePricing = () => {
-    // If backend hold pricing is already present, use it exclusively
+
     if (activeBooking.authoritativePricing) {
       return {
         ticketCount: activeBooking.selectedSeats.length,
@@ -281,19 +263,20 @@ export const BookingProvider = ({ children }) => {
 
     const seats = activeBooking.selectedSeats;
     const baseTotal = seats.reduce((acc, s) => acc + (s.price || 300), 0);
-    const convenienceFee = seats.length > 0 ? Math.round(baseTotal * 0.12) : 0;
+
+    const convenienceFee = seats.length > 0 ? Math.round(baseTotal * 0.21) : 0;
 
     let discount = 0;
     if (activeBooking.appliedPromo) {
       if (activeBooking.appliedPromo.discountPercent) {
         discount = Math.round((baseTotal * activeBooking.appliedPromo.discountPercent) / 100);
-        if (discount > 150) discount = 150; // Max cap
+        if (discount > 150) discount = 150; 
       } else if (activeBooking.appliedPromo.discountFlat) {
         discount = activeBooking.appliedPromo.discountFlat;
       }
     }
 
-    const totalAmount = Math.max(0, baseTotal + convenienceFee - discount);
+    const totalAmount = Math.max(0, baseTotal + convenienceFee + discount);
 
     return {
       ticketCount: seats.length,
@@ -304,7 +287,6 @@ export const BookingProvider = ({ children }) => {
     };
   };
 
-  // Finalize booking locally if offline or legacy
   const confirmBooking = (contactDetails = {}) => {
     const pricing = calculatePricing();
     const newId = `CNB-${Math.floor(100000 + Math.random() * 900000)}`;
@@ -342,10 +324,9 @@ export const BookingProvider = ({ children }) => {
     return newBookingRecord;
   };
 
-  // Cancel booking through backend API
   const cancelBooking = async (id, reason = 'User requested cancellation') => {
     try {
-      // Find booking record to get MongoDB ID if available
+
       const found = bookings.find((b) => b.id === id || b.bookingReference === id || b._id === id);
       const targetId = found?._id || found?.bookingReference || id;
 

@@ -140,17 +140,12 @@ const showtimeSchema = new mongoose.Schema(
   }
 );
 
-// Indexes for conflict checking and search performance
 showtimeSchema.index({ screen: 1, startTime: 1, endTime: 1 });
 showtimeSchema.index({ theatre: 1, startTime: 1 });
 showtimeSchema.index({ movie: 1, startTime: 1 });
 showtimeSchema.index({ movie: 1, theatre: 1, startTime: 1 });
 showtimeSchema.index({ 'heldSeats.expiresAt': 1 });
 
-/**
- * Static method to check for overlapping showtimes on the same screen.
- * Two intervals [S1, E1] and [S2, E2] intersect iff S1 < E2 AND E1 > S2.
- */
 showtimeSchema.statics.findConflict = async function (screenId, startTime, endTime, excludeShowtimeId = null) {
   const query = {
     screen: screenId,

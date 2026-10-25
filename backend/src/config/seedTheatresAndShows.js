@@ -94,7 +94,6 @@ export const SAMPLE_THEATRES = [
   },
 ];
 
-// Predefined sample occupied seats matching frontend demo
 const DEMO_BOOKED_SEATS = [
   { seatId: 'A5' },
   { seatId: 'A6' },
@@ -128,7 +127,6 @@ export const seedTheatresAndShows = async () => {
       );
       savedTheatres.push(theatre);
 
-      // Seed screens for this theatre
       for (const scData of screens) {
         let screen = await Screen.findOne({
           theatre: theatre._id,
@@ -156,7 +154,6 @@ export const seedTheatresAndShows = async () => {
 
     console.log(`[Seed] Theatres & screens synchronized (${savedTheatres.length} theatres, ${savedScreens.length} screens).`);
 
-    // Fetch movies to link to future showtimes
     const movies = await Movie.find({ isPublished: true }).limit(6);
     if (movies.length === 0) {
       console.warn('[Seed] No movies found in database. Please run movie seeder first.');
@@ -165,7 +162,6 @@ export const seedTheatresAndShows = async () => {
 
     console.log(`[Seed] Generating future showtimes for ${movies.length} movies across ${savedScreens.length} screens...`);
 
-    // Time schedule slots: [Hour, Minute] in 24-hr format
     const timeSlots = [
       { hours: 10, minutes: 30, tierPricing: { 'VIP Recliner': 520, 'Premium': 380, 'Classic': 280 } },
       { hours: 14, minutes: 0,  tierPricing: { 'VIP Recliner': 550, 'Premium': 400, 'Classic': 300 } },
@@ -176,7 +172,6 @@ export const seedTheatresAndShows = async () => {
     let createdShowsCount = 0;
     const now = new Date();
 
-    // Schedule shows for today + next 4 days (5 days total)
     for (let dayOffset = 0; dayOffset <= 4; dayOffset++) {
       const showDay = new Date(now);
       showDay.setDate(now.getDate() + dayOffset);
@@ -189,7 +184,6 @@ export const seedTheatresAndShows = async () => {
           const startTime = new Date(showDay);
           startTime.setHours(slot.hours, slot.minutes, 0, 0);
 
-          // If this slot is in the past for today, advance it to tomorrow so it is future
           if (startTime <= now) {
             continue;
           }
@@ -197,7 +191,6 @@ export const seedTheatresAndShows = async () => {
           const durationMinutes = assignedMovie.durationMinutes || 135;
           const endTime = new Date(startTime.getTime() + (durationMinutes + 20) * 60000);
 
-          // Check if showtime already exists
           const existing = await Showtime.findOne({
             screen: screen._id,
             startTime,
@@ -232,10 +225,6 @@ export const seedTheatresAndShows = async () => {
   }
 };
 
-/**
- * Checks if theatres and showtimes collection is empty.
- * Never touches users or bookings.
- */
 export const seedTheatresAndShowsIfEmpty = async () => {
   try {
     const theatreCount = await Theatre.countDocuments();
@@ -253,7 +242,6 @@ export const seedTheatresAndShowsIfEmpty = async () => {
   }
 };
 
-// Standalone execution: node src/config/seedTheatresAndShows.js
 if (process.argv[1] && process.argv[1].endsWith('seedTheatresAndShows.js')) {
   (async () => {
     try {

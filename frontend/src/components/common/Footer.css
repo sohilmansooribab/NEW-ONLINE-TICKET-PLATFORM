@@ -1,11 +1,10 @@
-/* Footer Styles — Premium White Theme */
+
 .footer-root {
   background-color: #FFFFFF;
   border-top: 1px solid var(--border);
   margin-top: 5rem;
 }
 
-/* Newsletter Banner */
 .newsletter-banner {
   background: linear-gradient(180deg, #FFF5F5 0%, #FFFFFF 100%);
   border-bottom: 1px solid var(--border);
@@ -79,7 +78,6 @@
   padding: 0.82rem 1.4rem;
 }
 
-/* Main Footer */
 .footer-main {
   padding-top: 3.5rem;
   padding-bottom: 2rem;
@@ -155,7 +153,6 @@
   cursor: default;
 }
 
-/* Cities Bar */
 .footer-cities {
   padding: 1.5rem 0;
   border-top: 1px solid var(--border);
@@ -187,7 +184,6 @@
   color: var(--primary);
 }
 
-/* Bottom Bar */
 .footer-bottom {
   display: flex;
   align-items: center;

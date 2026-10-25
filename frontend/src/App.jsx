@@ -6,7 +6,6 @@ import Footer from './components/common/Footer';
 import Toast from './components/common/Toast';
 import ScrollToTop from './components/common/ScrollToTop';
 
-// Pages
 import Home from './pages/Home';
 import Movies from './pages/Movies';
 import MovieDetails from './pages/MovieDetails';
@@ -42,7 +41,7 @@ const AppLayout = () => {
           <Route path="/signup" element={<Signup />} />
           <Route path="/organizer" element={<OrganizerDashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />
-          {/* Fallback route */}
+
           <Route path="*" element={<Home />} />
         </Routes>
       </main>

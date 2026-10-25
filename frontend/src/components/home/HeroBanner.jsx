@@ -4,7 +4,6 @@ import { Star, Clock, Ticket, Film, ChevronLeft, ChevronRight, Play, Sparkles, C
 import { useBooking } from '../../context/BookingContext';
 import './HeroBanner.css';
 
-// Rich promo slides highlighting movies and live entertainment events
 const HERO_SLIDES = [
   {
     id: 'slide-1',
@@ -94,7 +93,6 @@ const HeroBanner = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Auto slide every 5.5 seconds if not paused
   useEffect(() => {
     if (isPaused) return;
     const interval = setInterval(() => {
@@ -134,9 +132,9 @@ const HeroBanner = () => {
     >
       <div className="container hero-banner-container-white">
         <div className="hero-split-grid">
-          {/* Left Column: Information & CTAs */}
+
           <div className="hero-info-column animate-fade-in" key={currentSlide.id}>
-            {/* Top Badges */}
+
             <div className="hero-badge-strip">
               <span className="badge badge-primary hero-highlight-tag">
                 <Sparkles size={12} /> {currentSlide.categoryTag}
@@ -146,12 +144,10 @@ const HeroBanner = () => {
               </span>
             </div>
 
-            {/* Title */}
             <h1 className="hero-movie-title-white">
               {currentSlide.title}
             </h1>
 
-            {/* Meta Row */}
             <div className="hero-meta-row-white">
               <div className="hero-rating-box">
                 <Star size={16} fill="#D97706" color="#D97706" />
@@ -169,12 +165,10 @@ const HeroBanner = () => {
               </div>
             </div>
 
-            {/* Synopsis */}
             <p className="hero-synopsis-white">
               {currentSlide.synopsis}
             </p>
 
-            {/* CTAs */}
             <div className="hero-actions-row">
               <button 
                 type="button" 
@@ -203,7 +197,6 @@ const HeroBanner = () => {
               )}
             </div>
 
-            {/* Carousel Controls */}
             <div className="hero-carousel-nav">
               <div className="hero-carousel-dots">
                 {HERO_SLIDES.map((slide, idx) => (
@@ -237,7 +230,6 @@ const HeroBanner = () => {
             </div>
           </div>
 
-          {/* Right Column: Prominent Artwork Card */}
           <div className="hero-artwork-column">
             <div className="hero-artwork-card" key={`art-${currentSlide.id}`}>
               <img
@@ -246,7 +238,7 @@ const HeroBanner = () => {
                 className="hero-artwork-img"
               />
               <div className="hero-artwork-overlay" />
-              
+
               <div className="hero-artwork-footer">
                 <div className="artwork-footer-meta">
                   <span className="artwork-formats-tag">

@@ -5,11 +5,6 @@ import Showtime from '../models/Showtime.js';
 import Screen from '../models/Screen.js';
 import { calculateAuthoritativePricing } from '../utils/pricing.js';
 
-/**
- * @desc    Hold seats temporarily (Default 5 minutes)
- * @route   POST /api/bookings/hold
- * @access  Private (USER, ADMIN)
- */
 export const holdSeats = async (req, res, next) => {
   try {
     const { showtimeId, seats, durationSeconds, promoCode } = req.body;
@@ -63,7 +58,6 @@ export const holdSeats = async (req, res, next) => {
 
     const cleanSeatIds = seats.map((s) => s.toUpperCase().trim());
 
-    // 1. Authoritative Pricing Calculation (backend as source of truth)
     let seatDetails, pricing;
     try {
       const calcResult = calculateAuthoritativePricing(showtime, screen, cleanSeatIds, promoCode);
@@ -76,7 +70,6 @@ export const holdSeats = async (req, res, next) => {
       });
     }
 
-    // 2. Configurable hold expiration (default 300 seconds / 5 minutes)
     const holdSeconds = Math.min(
       600,
       Math.max(5, parseInt(durationSeconds || process.env.HOLD_DURATION_SECONDS || 300, 10))
@@ -85,16 +78,11 @@ export const holdSeats = async (req, res, next) => {
     const expiresAt = new Date(now.getTime() + holdSeconds * 1000);
     const newHoldId = new mongoose.Types.ObjectId();
 
-    // 3. Clean up stale/expired holds on this showtime first
     await Showtime.updateOne(
       { _id: showtime._id },
       { $pull: { heldSeats: { expiresAt: { $lte: now } } } }
     );
 
-    // 4. Atomic conditional hold on Showtime document
-    // Ensures:
-    // a) None of requested seats are in bookedSeats
-    // b) None of requested seats are in heldSeats with expiresAt > now
     const atomicQuery = {
       _id: showtime._id,
       isActive: true,
@@ -135,7 +123,6 @@ export const holdSeats = async (req, res, next) => {
       });
     }
 
-    // 5. Create Hold record
     const hold = await Hold.create({
       _id: newHoldId,
       user: req.user._id,
@@ -162,11 +149,6 @@ export const holdSeats = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Release temporary seat hold early
- * @route   DELETE /api/bookings/hold/:holdId
- * @access  Private (USER, ADMIN)
- */
 export const releaseHold = async (req, res, next) => {
   try {
     const { holdId } = req.params;
@@ -186,7 +168,6 @@ export const releaseHold = async (req, res, next) => {
       });
     }
 
-    // Ownership check
     if (hold.user.toString() !== req.user._id.toString() && req.user.role !== 'ADMIN') {
       return res.status(403).json({
         success: false,
@@ -201,7 +182,6 @@ export const releaseHold = async (req, res, next) => {
       });
     }
 
-    // Atomically remove from Showtime.heldSeats
     await Showtime.updateOne(
       { _id: hold.showtime },
       { $pull: { heldSeats: { holdId: hold._id } } }
@@ -220,18 +200,12 @@ export const releaseHold = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Create a booking from an active held reservation
- * @route   POST /api/bookings
- * @access  Private (USER, ADMIN)
- */
 export const createBooking = async (req, res, next) => {
   try {
     const { holdId, idempotencyKey: bodyIdempotencyKey, contactDetails, promoCode } = req.body;
     const headerIdempotencyKey = req.headers['idempotency-key'];
     const idempotencyKey = bodyIdempotencyKey || headerIdempotencyKey || null;
 
-    // 1. Idempotency Check: Return existing booking if key already processed for this user
     if (idempotencyKey) {
       const existingBooking = await Booking.findOne({
         user: req.user._id,
@@ -266,7 +240,6 @@ export const createBooking = async (req, res, next) => {
       });
     }
 
-    // 2. Verify Hold Existence and Ownership
     const hold = await Hold.findById(holdId);
     if (!hold) {
       return res.status(404).json({
@@ -282,7 +255,6 @@ export const createBooking = async (req, res, next) => {
       });
     }
 
-    // 3. Verify Hold Status and Expiration
     if (hold.status === 'converted') {
       return res.status(400).json({
         success: false,
@@ -311,7 +283,6 @@ export const createBooking = async (req, res, next) => {
       });
     }
 
-    // 4. Fetch and validate Showtime
     const showtime = await Showtime.findById(hold.showtime)
       .populate('screen')
       .populate('theatre')
@@ -324,7 +295,6 @@ export const createBooking = async (req, res, next) => {
       });
     }
 
-    // 5. Authoritative Pricing Recalculation (Backend Source of Truth)
     const { seatDetails, pricing } = calculateAuthoritativePricing(
       showtime,
       showtime.screen,
@@ -334,7 +304,6 @@ export const createBooking = async (req, res, next) => {
 
     const newBookingId = new mongoose.Types.ObjectId();
 
-    // 6. Atomic transition: pull from heldSeats and push to bookedSeats
     const atomicTransitionQuery = {
       _id: showtime._id,
       heldSeats: {
@@ -376,7 +345,6 @@ export const createBooking = async (req, res, next) => {
       });
     }
 
-    // 7. Create Booking Document
     const booking = await Booking.create({
       _id: newBookingId,
       idempotencyKey,
@@ -399,7 +367,6 @@ export const createBooking = async (req, res, next) => {
       paymentStatus: 'pending',
     });
 
-    // Mark hold as converted
     hold.status = 'converted';
     hold.convertedBooking = booking._id;
     await hold.save();
@@ -427,7 +394,7 @@ export const createBooking = async (req, res, next) => {
     });
   } catch (error) {
     if (error.code === 11000 && error.keyPattern?.idempotencyKey) {
-      // Caught duplicate idempotency key race condition
+
       const existing = await Booking.findOne({
         user: req.user._id,
         idempotencyKey: req.body.idempotencyKey || req.headers['idempotency-key'],
@@ -445,11 +412,6 @@ export const createBooking = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Simulate and verify payment provider confirmation
- * @route   POST /api/bookings/:id/confirm-payment
- * @access  Private (USER, ADMIN)
- */
 export const confirmPayment = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -492,7 +454,6 @@ export const confirmPayment = async (req, res, next) => {
       });
     }
 
-    // Require simulated provider transaction verification
     const verifiedTxId = transactionId || `txn_${Math.random().toString(36).substring(2, 10)}`;
 
     booking.paymentStatus = 'paid';
@@ -515,11 +476,6 @@ export const confirmPayment = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Get user's personal booking history
- * @route   GET /api/bookings/my
- * @access  Private (USER, ADMIN)
- */
 export const getMyBookings = async (req, res, next) => {
   try {
     const bookings = await Booking.find({ user: req.user._id })
@@ -539,11 +495,6 @@ export const getMyBookings = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Get single booking by ID or reference
- * @route   GET /api/bookings/:id
- * @access  Private (USER owner, ADMIN)
- */
 export const getBookingById = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -568,7 +519,6 @@ export const getBookingById = async (req, res, next) => {
       });
     }
 
-    // Access control: User may only view their own bookings, unless ADMIN
     if (booking.user.toString() !== req.user._id.toString() && req.user.role !== 'ADMIN') {
       return res.status(403).json({
         success: false,
@@ -585,11 +535,6 @@ export const getBookingById = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Get lightweight booking status
- * @route   GET /api/bookings/:id/status
- * @access  Private (USER owner, ADMIN)
- */
 export const getBookingStatus = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -634,11 +579,6 @@ export const getBookingStatus = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Cancel a booking and release booked seats
- * @route   POST /api/bookings/:id/cancel
- * @access  Private (USER owner, ADMIN)
- */
 export const cancelBooking = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -659,7 +599,6 @@ export const cancelBooking = async (req, res, next) => {
       });
     }
 
-    // Ownership check
     if (booking.user.toString() !== req.user._id.toString() && req.user.role !== 'ADMIN') {
       return res.status(403).json({
         success: false,
@@ -682,7 +621,6 @@ export const cancelBooking = async (req, res, next) => {
       });
     }
 
-    // Cancellation Policy Checks
     const now = new Date();
     if (new Date(showtime.startTime) <= now) {
       return res.status(400).json({
@@ -698,7 +636,6 @@ export const cancelBooking = async (req, res, next) => {
       });
     }
 
-    // 2-hour cancellation cutoff window
     const cutoffMs = 2 * 60 * 60 * 1000;
     if (new Date(showtime.startTime).getTime() - now.getTime() < cutoffMs && req.user.role !== 'ADMIN') {
       return res.status(400).json({
@@ -707,7 +644,6 @@ export const cancelBooking = async (req, res, next) => {
       });
     }
 
-    // Atomically release the seats from Showtime.bookedSeats
     await Showtime.updateOne(
       { _id: showtime._id },
       { $pull: { bookedSeats: { bookingId: booking._id } } }

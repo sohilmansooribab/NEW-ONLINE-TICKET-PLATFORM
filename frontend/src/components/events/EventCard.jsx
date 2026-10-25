@@ -25,8 +25,7 @@ const EventCard = ({ event }) => {
     <div className="event-card">
       <div className="event-poster-wrap">
         <img src={event.poster} alt={event.title} className="event-poster-img" loading="lazy" />
-        
-        {/* Category Pill */}
+
         <div className="event-top-badge">
           <span className="badge badge-primary event-category-badge">
             <IconComp size={12} />
@@ -43,7 +42,7 @@ const EventCard = ({ event }) => {
 
       <div className="event-info-body">
         <h3 className="event-title" title={event.title}>{event.title}</h3>
-        
+
         <div className="event-meta-line">
           <Calendar size={13} className="event-meta-icon" />
           <span>{event.date}</span>

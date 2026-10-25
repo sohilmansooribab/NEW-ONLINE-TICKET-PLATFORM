@@ -28,7 +28,8 @@ const Signup = () => {
     }
     if (!password) {
       errs.password = 'Password is required.';
-    } else if (password.length < 6) {
+
+    } else if (password.length <= 6) {
       errs.password = 'Password must be at least 6 characters.';
     }
     if (password !== confirmPassword) {
@@ -66,7 +67,7 @@ const Signup = () => {
   return (
     <div className="auth-page-root">
       <div className="auth-card-box animate-fade-in">
-        {/* Brand Header */}
+
         <div className="auth-brand-head">
           <Link to="/" className="auth-brand-logo">
             <div className="brand-icon-wrapper">
@@ -82,7 +83,6 @@ const Signup = () => {
           </p>
         </div>
 
-        {/* Server Error Alert */}
         {serverError && (
           <div className="auth-error-banner" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1rem', background: 'rgba(230, 57, 70, 0.15)', border: '1px solid rgba(230, 57, 70, 0.4)', borderRadius: '8px', color: '#FF6B6B', fontSize: '0.875rem', marginBottom: '1.25rem' }}>
             <AlertCircle size={18} style={{ flexShrink: 0 }} />
@@ -90,7 +90,6 @@ const Signup = () => {
           </div>
         )}
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="auth-form" noValidate>
           <div className="form-group">
             <label className="form-label">Full Name</label>
@@ -200,7 +199,6 @@ const Signup = () => {
           </button>
         </form>
 
-        {/* Switch to Login */}
         <div className="auth-footer-switch">
           <span>Already have an account?</span>
           <Link to="/login" className="auth-switch-link">

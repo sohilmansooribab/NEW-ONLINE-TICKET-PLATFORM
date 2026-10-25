@@ -18,7 +18,7 @@ import './MyBookings.css';
 
 const MyBookings = () => {
   const { bookings, cancelBooking, refreshBookings, currentUser, showToast } = useBooking();
-  const [activeTab, setActiveTab] = useState('upcoming'); // 'upcoming' | 'history'
+  const [activeTab, setActiveTab] = useState('upcoming'); 
   const [selectedTicketModal, setSelectedTicketModal] = useState(null);
   const [cancelPromptId, setCancelPromptId] = useState(null);
 
@@ -30,8 +30,9 @@ const MyBookings = () => {
   const upcomingBookings = safeBookings.filter(b => 
     b && (b.status === 'CONFIRMED' || b.status === 'pending_payment' || b.status === 'PENDING')
   );
+
   const pastBookings = safeBookings.filter(b => 
-    b && (b.status === 'COMPLETED' || b.status === 'CANCELLED' || b.status === 'EXPIRED')
+    b && (b.status === 'COMPLETED' || b.status === 'cancelled' || b.status === 'EXPIRED')
   );
 
   const displayedBookings = activeTab === 'upcoming' ? upcomingBookings : pastBookings;
@@ -48,7 +49,7 @@ const MyBookings = () => {
   return (
     <div className="my-bookings-root">
       <div className="container bookings-container">
-        {/* Header */}
+
         <div className="bookings-header">
           <div>
             <span className="badge badge-primary header-badge">TICKETS & RESERVATIONS</span>
@@ -58,7 +59,6 @@ const MyBookings = () => {
             </p>
           </div>
 
-          {/* Tabs */}
           <div className="bookings-tabs-bar">
             <button
               className={`booking-tab-btn ${activeTab === 'upcoming' ? 'active' : ''}`}
@@ -75,7 +75,6 @@ const MyBookings = () => {
           </div>
         </div>
 
-        {/* Bookings List */}
         {displayedBookings.length === 0 ? (
           <div className="no-bookings-card">
             <div className="no-bookings-icon">
@@ -97,7 +96,7 @@ const MyBookings = () => {
           <div className="bookings-cards-stack">
             {displayedBookings.map((b) => (
               <div key={b.id} className="cinema-ticket-card">
-                {/* Left Poster Pane */}
+
                 <div className="ticket-poster-side">
                   <img src={b.moviePoster} alt={b.movieTitle} className="ticket-poster-img" />
                   <span className={`ticket-status-tag status-${b.status.toLowerCase()}`}>
@@ -105,14 +104,12 @@ const MyBookings = () => {
                   </span>
                 </div>
 
-                {/* Perforated Divider */}
                 <div className="ticket-perforation">
                   <div className="punch-hole top" />
                   <div className="perf-line" />
                   <div className="punch-hole bottom" />
                 </div>
 
-                {/* Center Ticket Info */}
                 <div className="ticket-info-center">
                   <div className="ticket-head">
                     <span className="ticket-ref-code">REF: {b.id}</span>
@@ -169,7 +166,6 @@ const MyBookings = () => {
                   </div>
                 </div>
 
-                {/* Right QR Code Thumbnail */}
                 <div className="ticket-qr-side">
                   <img src={b.qrCode} alt="Entry QR" className="ticket-qr-thumbnail" />
                   <span className="ticket-qr-label">Contactless Entry</span>
@@ -180,7 +176,6 @@ const MyBookings = () => {
         )}
       </div>
 
-      {/* View E-Ticket Modal */}
       {selectedTicketModal && (
         <div className="ticket-modal-backdrop" onClick={() => setSelectedTicketModal(null)}>
           <div className="printable-ticket-modal animate-fade-in" onClick={(e) => e.stopPropagation()}>
@@ -266,7 +261,6 @@ const MyBookings = () => {
         </div>
       )}
 
-      {/* Cancel Confirmation Prompt */}
       {cancelPromptId && (
         <div className="ticket-modal-backdrop" onClick={() => setCancelPromptId(null)}>
           <div className="cancel-confirm-box animate-fade-in" onClick={(e) => e.stopPropagation()}>

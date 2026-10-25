@@ -1,4 +1,4 @@
-/* My Bookings Styles — Premium White Theme */
+
 .my-bookings-root {
   min-height: 100vh;
   padding-bottom: 5rem;
@@ -36,7 +36,6 @@
   color: var(--text-secondary);
 }
 
-/* Tabs */
 .bookings-tabs-bar {
   display: flex;
   background-color: #FFFFFF;
@@ -65,7 +64,6 @@
   box-shadow: 0 2px 8px var(--primary-glow);
 }
 
-/* No Bookings Placeholder */
 .no-bookings-card {
   display: flex;
   flex-direction: column;
@@ -105,14 +103,12 @@
   margin-bottom: 1.5rem;
 }
 
-/* Cards Stack */
 .bookings-cards-stack {
   display: flex;
   flex-direction: column;
   gap: 1.75rem;
 }
 
-/* Cinema Perforated Ticket Card (White Theme) */
 .cinema-ticket-card {
   display: flex;
   align-items: stretch;
@@ -131,7 +127,6 @@
   box-shadow: var(--shadow-md);
 }
 
-/* Poster Left */
 .ticket-poster-side {
   width: 140px;
   flex-shrink: 0;
@@ -171,7 +166,6 @@
   color: #FFFFFF;
 }
 
-/* Perforation Divider */
 .ticket-perforation {
   position: relative;
   width: 24px;
@@ -200,7 +194,6 @@
   border-left: 2px dashed #D1D5DB;
 }
 
-/* Info Center */
 .ticket-info-center {
   flex: 1;
   padding: 1.5rem;
@@ -294,7 +287,6 @@
   color: #DC2626;
 }
 
-/* Right QR side */
 .ticket-qr-side {
   width: 170px;
   flex-shrink: 0;
@@ -323,7 +315,6 @@
   color: var(--text-secondary);
 }
 
-/* E-Ticket Printable Modal */
 .ticket-modal-backdrop {
   position: fixed;
   inset: 0;
@@ -457,7 +448,6 @@
   flex: 1;
 }
 
-/* Cancel Confirm Box */
 .cancel-confirm-box {
   background-color: #FFFFFF;
   border: 1px solid var(--border);

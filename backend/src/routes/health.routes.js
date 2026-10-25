@@ -4,18 +4,13 @@ import { connectDB } from '../config/db.js';
 
 const router = Router();
 
-/**
- * @route   GET /api/health
- * @desc    Health check endpoint to inspect server and database status
- * @access  Public
- */
 router.get('/', async (req, res) => {
-  // If disconnected, attempt to connect on-demand
+
   if (mongoose.connection.readyState !== 1 && process.env.MONGODB_URI) {
     try {
       await connectDB();
     } catch (_) {
-      // Connect warning is handled within connectDB
+
     }
   }
 
@@ -48,4 +43,3 @@ router.get('/', async (req, res) => {
 });
 
 export default router;
-

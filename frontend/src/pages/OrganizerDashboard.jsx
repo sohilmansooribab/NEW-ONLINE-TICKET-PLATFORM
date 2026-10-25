@@ -20,8 +20,8 @@ import './Dashboard.css';
 
 const OrganizerDashboard = () => {
   const { currentUser, showToast } = useBooking();
-  const [activeNav, setActiveNav] = useState('overview'); // 'overview' | 'shows' | 'movies' | 'sales'
-  
+  const [activeNav, setActiveNav] = useState('overview'); 
+
   const [theatresList, setTheatresList] = useState([]);
   const [showsList, setShowsList] = useState([]);
   const [bookingsList, setBookingsList] = useState([]);
@@ -30,8 +30,7 @@ const OrganizerDashboard = () => {
   const [searchTable, setSearchTable] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  // Modals state
+
   const [isAddShowOpen, setIsAddShowOpen] = useState(false);
   const [newShowData, setNewShowData] = useState({
     movieId: '',
@@ -46,7 +45,6 @@ const OrganizerDashboard = () => {
 
   const isAuthorized = ['ORGANIZER', 'ADMIN'].includes(currentUser?.role?.toUpperCase());
 
-  // Load organizer's assigned theatres, showtimes, and analytics
   const loadOrganizerData = useCallback(async () => {
     if (!isAuthorized) return;
     setIsLoading(true);
@@ -103,7 +101,6 @@ const OrganizerDashboard = () => {
     loadOrganizerData();
   }, [loadOrganizerData]);
 
-  // Handle scheduling new showtime on organizer's venue
   const handleAddShowSubmit = async (e) => {
     e.preventDefault();
     if (!newShowData.theatreId || !newShowData.screenId || !newShowData.movieId) {
@@ -140,7 +137,6 @@ const OrganizerDashboard = () => {
     }
   };
 
-  // Handle canceling / deleting showtime
   const handleDeleteShow = async (id) => {
     if (!window.confirm('Are you sure you want to cancel this scheduled showtime?')) return;
     try {
@@ -152,7 +148,6 @@ const OrganizerDashboard = () => {
     }
   };
 
-  // Unauthorized Access Screen
   if (!isAuthorized) {
     return (
       <div className="dashboard-root" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
@@ -193,7 +188,7 @@ const OrganizerDashboard = () => {
 
   return (
     <div className="dashboard-root">
-      {/* Sidebar */}
+
       <aside className="dashboard-sidebar">
         <div className="sidebar-brand-pane">
           <span className="sidebar-brand-name">CineBook Partner</span>
@@ -226,7 +221,6 @@ const OrganizerDashboard = () => {
           </button>
         </nav>
 
-        {/* Assigned Multiplex Card */}
         <div className="sidebar-footer-theatre-card">
           <div className="footer-theatre-label">Assigned Venue</div>
           <div className="footer-theatre-name">{assignedTheatre.name}</div>
@@ -236,9 +230,8 @@ const OrganizerDashboard = () => {
         </div>
       </aside>
 
-      {/* Main Content Area */}
       <main className="dashboard-main-area">
-        {/* Top Header */}
+
         <header className="dashboard-topbar">
           <div>
             <h1 className="dash-title">Cinema Partner Portal</h1>
@@ -258,7 +251,6 @@ const OrganizerDashboard = () => {
           </button>
         </header>
 
-        {/* Stats Grid */}
         <section className="stats-grid">
           <div className="stat-card">
             <div className="stat-icon-wrap" style={{ backgroundColor: 'rgba(230, 57, 70, 0.12)', color: '#E63946' }}>
@@ -305,7 +297,6 @@ const OrganizerDashboard = () => {
           </div>
         </section>
 
-        {/* Showtimes Table View */}
         <section className="dashboard-section-box">
           <div className="table-controls-header">
             <div>
@@ -428,7 +419,6 @@ const OrganizerDashboard = () => {
         </section>
       </main>
 
-      {/* Add Showtime Modal */}
       {isAddShowOpen && (
         <div className="modal-backdrop" onClick={() => setIsAddShowOpen(false)}>
           <div className="modal-box animate-fade-in" onClick={(e) => e.stopPropagation()}>
@@ -513,7 +503,8 @@ const OrganizerDashboard = () => {
                   <input
                     type="number"
                     value={newShowData.pricePremium}
-                    onChange={(e) => setNewShowData({ ...newShowData, pricePremium: e.target.value })}
+
+                    onChange={(e) => setNewShowData({ ...newShowData, priceClassic: e.target.value })}
                     className="form-input"
                     required
                   />

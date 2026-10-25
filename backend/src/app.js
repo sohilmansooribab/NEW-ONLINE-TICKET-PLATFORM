@@ -16,10 +16,8 @@ import { notFoundHandler, errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
 
-// Security HTTP headers
 app.use(helmet());
 
-// Cross-Origin Resource Sharing
 const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
 const allowedOrigins = [clientUrl, 'http://localhost:5173', 'http://127.0.0.1:5173'];
 app.use(
@@ -34,7 +32,6 @@ app.use(
   })
 );
 
-// Body Parsers (JSON with rawBody capture for webhook signature verification, and URL-encoded)
 app.use(
   express.json({
     verify: (req, res, buf) => {
@@ -44,7 +41,6 @@ app.use(
 );
 app.use(express.urlencoded({ extended: true }));
 
-// Root info route
 app.get('/', (req, res) => {
   res.status(200).json({
     success: true,
@@ -125,14 +121,12 @@ app.get('/', (req, res) => {
   });
 });
 
-// Database connection assurance for serverless environments (e.g. Vercel)
 app.use(async (req, res, next) => {
-  // Allow root info and health check routes to run without blocking
+
   if (req.path === '/' || req.path === '/api/health') {
     return next();
   }
 
-  // Ensure MongoDB is connected before handling model operations
   if (mongoose.connection.readyState !== 1) {
     const isConnected = await connectDB();
     if (!isConnected && mongoose.connection.readyState !== 1) {
@@ -149,7 +143,6 @@ app.use(async (req, res, next) => {
   next();
 });
 
-// Mount Routes
 app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/movies', movieRoutes);
@@ -160,7 +153,6 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/organizer', organizerRoutes);
 
-// Error Handling Middlewares
 app.use(notFoundHandler);
 app.use(errorHandler);
 

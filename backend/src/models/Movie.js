@@ -176,12 +176,10 @@ const movieSchema = new mongoose.Schema(
   }
 );
 
-// Virtual synopsis alias for frontend compatibility
 movieSchema.virtual('synopsis').get(function () {
   return this.description;
 });
 
-// Text index for robust full-text search
 movieSchema.index({
   title: 'text',
   description: 'text',
@@ -189,10 +187,8 @@ movieSchema.index({
   'cast.name': 'text',
 });
 
-// Compound index for category/industry and publication status
 movieSchema.index({ industry: 1, isPublished: 1, rating: -1 });
 
-// Helper to auto-generate slug if not provided
 movieSchema.pre('validate', function () {
   if (this.title && !this.slug) {
     this.slug = this.title

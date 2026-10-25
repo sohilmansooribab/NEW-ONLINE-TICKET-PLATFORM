@@ -1,4 +1,3 @@
-// Mock & Curated database for CineBook with authentic movie data and live events
 
 export const CITIES = [
   { id: 'delhi', name: 'Delhi-NCR', count: 48 },
@@ -32,7 +31,6 @@ export const MOVIE_CATEGORIES = [
   { id: 'hollywood', name: 'Hollywood' },
 ];
 
-// Separate curated movie data arrays for Bollywood & Hollywood
 export const BOLLYWOOD_MOVIES = [
   {
     id: 'dhurandhar',
@@ -376,10 +374,8 @@ export const HOLLYWOOD_MOVIES = [
   }
 ];
 
-// Unified catalog containing both categories
 export const MOVIES = [...BOLLYWOOD_MOVIES, ...HOLLYWOOD_MOVIES];
 
-// Currently Trending Events & Entertainment (Concerts, Dandiya, Comedy, Experiences)
 export const ENTERTAINMENT_EVENTS = [
   {
     id: 'evt-1',

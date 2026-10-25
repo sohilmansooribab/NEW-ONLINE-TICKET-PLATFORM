@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema(
     passwordHash: {
       type: String,
       required: [true, 'Password hash is required'],
-      select: false, // Prevents passwordHash from being returned by default
+      select: false, 
     },
     role: {
       type: String,
@@ -41,18 +41,15 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// Method to securely compare candidate password with stored hash
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.passwordHash);
 };
 
-// Static helper to hash passwords with bcrypt
 userSchema.statics.hashPassword = async function (plainPassword) {
   const saltRounds = 10;
   return bcrypt.hash(plainPassword, saltRounds);
 };
 
-// Override toJSON to ensure passwordHash and __v are never serialized in API responses
 userSchema.methods.toJSON = function () {
   const userObj = this.toObject();
   delete userObj.passwordHash;

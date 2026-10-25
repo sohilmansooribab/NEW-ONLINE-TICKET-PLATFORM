@@ -15,7 +15,6 @@ import { useBooking } from '../context/BookingContext';
 import { showtimesApi, bookingsApi } from '../services/api';
 import './SelectSeats.css';
 
-// Fallback layout definition if offline
 const FALLBACK_SEAT_ROWS = [
   { row: 'A', tier: 'VIP Recliner', price: 520, seatsCount: 12 },
   { row: 'B', tier: 'VIP Recliner', price: 520, seatsCount: 12 },
@@ -55,7 +54,6 @@ const SelectSeats = () => {
 
   const pricing = calculatePricing();
 
-  // Load live seats from backend
   const loadSeats = useCallback(async (stId) => {
     try {
       setIsLoading(true);
@@ -65,7 +63,6 @@ const SelectSeats = () => {
         setLiveSeatRows(rows);
         setActiveShowtimeId(stId);
 
-        // Compute occupied and held sets
         const occupied = new Set(res.occupiedSeatIds || []);
         const held = new Set(res.heldSeatIds || []);
         const allSeatsList = res.seats || res.allSeats || [];
@@ -95,14 +92,14 @@ const SelectSeats = () => {
   }, [activeBooking.showtime, activeBooking.theatre, activeBooking.screen, activeBooking.movie, updateBookingState]);
 
   useEffect(() => {
-    // Determine target showtime ID: activeBooking.showtimeId, or routeParam if ObjectId
+
     const isObjectId = /^[0-9a-fA-F]{24}$/.test(routeParam);
     const targetId = activeBooking.showtimeId || activeBooking.showtime?._id || (isObjectId ? routeParam : null);
 
     if (targetId) {
       loadSeats(targetId);
     } else {
-      // Find showtime matching theatre or movie
+
       showtimesApi.getShowtimes({ limit: 10 })
         .then(res => {
           if (res?.data && res.data.length > 0) {
@@ -135,14 +132,12 @@ const SelectSeats = () => {
       return;
     }
 
-    // Enforce login requirement for reserving seats
     if (!currentUser) {
       showToast('Please sign in to reserve your seats.', 'warning');
       navigate('/login');
       return;
     }
 
-    // If live showtime ID is present, acquire authoritative seat hold on backend
     if (activeShowtimeId) {
       setIsHolding(true);
       try {
@@ -179,13 +174,12 @@ const SelectSeats = () => {
       }
     }
 
-    // Fallback navigation if offline
     navigate('/booking-summary');
   };
 
   return (
     <div className="select-seats-root">
-      {/* Top Header Bar */}
+
       <div className="seats-top-bar">
         <div className="container seats-top-content">
           <button 
@@ -212,9 +206,9 @@ const SelectSeats = () => {
       </div>
 
       <div className="container seats-main-layout">
-        {/* Left / Center: Interactive Auditorium Map */}
+
         <div className="seats-auditorium-container">
-          {/* Curved Screen Indicator */}
+
           <div className="cinema-screen-wrap">
             <div className="screen-curve-glow" />
             <div className="screen-curve-bar" />
@@ -223,11 +217,10 @@ const SelectSeats = () => {
             </div>
           </div>
 
-          {/* Seat Grid by Tiers */}
           <div className="seat-grid-scroll-box">
             <div className="seat-grid-canvas">
               {liveSeatRows ? (
-                // Live backend tiered seat layout
+
                 liveSeatRows.map((rowItem, rIdx) => {
                   const prevRow = liveSeatRows[rIdx - 1];
                   const showTierHeader = !prevRow || prevRow.tier !== rowItem.tier;
@@ -276,7 +269,7 @@ const SelectSeats = () => {
                   );
                 })
               ) : (
-                // Fallback template
+
                 FALLBACK_SEAT_ROWS.map((rowItem, rIdx) => {
                   const prevRow = FALLBACK_SEAT_ROWS[rIdx - 1];
                   const showTierHeader = !prevRow || prevRow.tier !== rowItem.tier;
@@ -339,7 +332,6 @@ const SelectSeats = () => {
             </div>
           </div>
 
-          {/* Seat Map Legend */}
           <div className="seats-legend-bar">
             <div className="legend-entry">
               <div className="legend-seat-sample available" />
@@ -369,7 +361,6 @@ const SelectSeats = () => {
           </div>
         </div>
 
-        {/* Right: Selected Seats Live Summary Drawer */}
         <div className="seats-summary-sidebar">
           <div className="summary-card">
             <h3 className="summary-card-title">Booking Details</h3>
@@ -393,7 +384,6 @@ const SelectSeats = () => {
 
             <div className="summary-divider" />
 
-            {/* Selected Seats List */}
             <div className="selected-seats-block">
               <div className="flex-between">
                 <span className="selected-seats-label">Selected Seats</span>
@@ -420,7 +410,6 @@ const SelectSeats = () => {
 
             <div className="summary-divider" />
 
-            {/* Live Pricing Breakdown */}
             <div className="pricing-breakdown-list">
               <div className="pricing-row">
                 <span className="price-label">Tickets Subtotal</span>
@@ -436,7 +425,6 @@ const SelectSeats = () => {
               </div>
             </div>
 
-            {/* Action CTA */}
             <button 
               type="button" 
               className="btn btn-primary btn-lg seats-proceed-btn"

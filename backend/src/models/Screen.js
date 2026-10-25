@@ -1,11 +1,5 @@
 import mongoose from 'mongoose';
 
-/**
- * Standard CineBook seat layout configuration:
- * Rows A & B: VIP Recliner (12 seats each)
- * Rows C, D, E, F: Premium (16 seats each)
- * Rows G, H, J: Classic (18 seats each)
- */
 export const DEFAULT_TIER_CONFIG = [
   { name: 'VIP Recliner', defaultPrice: 520, rows: ['A', 'B'], seatsPerRow: 12 },
   { name: 'Premium', defaultPrice: 380, rows: ['C', 'D', 'E', 'F'], seatsPerRow: 16 },
@@ -115,10 +109,8 @@ const screenSchema = new mongoose.Schema(
   }
 );
 
-// Compound index to ensure uniqueness of screen number within a single theatre
 screenSchema.index({ theatre: 1, screenNumber: 1 }, { unique: true });
 
-// Auto-populate seats if not explicitly provided
 screenSchema.pre('validate', function () {
   if (!this.seats || this.seats.length === 0) {
     this.seats = generateDefaultSeats();

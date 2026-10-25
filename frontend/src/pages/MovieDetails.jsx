@@ -44,7 +44,7 @@ const MovieDetails = () => {
       })
       .catch((err) => {
         console.warn('Backend movie detail error, falling back:', err.message);
-        // Fallback to local catalogue if not already found
+
         if (isMounted) {
           setMovie((prev) => prev || MOVIES.find((m) => m.id === id || m.slug === id || m._id === id) || MOVIES[0]);
         }
@@ -87,8 +87,10 @@ const MovieDetails = () => {
   }
 
   const movieId = movie.slug || movie.id || movie._id;
-  const ratingVal = typeof movie.rating === 'number' ? movie.rating.toFixed(1) : (movie.rating || '8.5');
-  const durationText = movie.duration || (movie.durationMinutes ? `${Math.floor(movie.durationMinutes / 60)}h ${movie.durationMinutes % 60}m` : '2h 15m');
+
+  const durationText = movie.durationMinutes 
+    ? `${Math.floor(movie.durationMinutes / 60)}h ${movie.durationMinutes}m` 
+    : (movie.duration || '2h 15m');
   const releaseStr = movie.releaseDate 
     ? (typeof movie.releaseDate === 'string' && movie.releaseDate.length > 10 ? new Date(movie.releaseDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : movie.releaseDate)
     : 'Now Showing';
@@ -113,7 +115,7 @@ const MovieDetails = () => {
 
   return (
     <div className="movie-details-root">
-      {/* Backdrop Header Hero */}
+
       <div className="details-hero">
         <div 
           className="details-backdrop"
@@ -123,7 +125,7 @@ const MovieDetails = () => {
         <div className="details-backdrop-bottom-fade" />
 
         <div className="container details-hero-content">
-          {/* Breadcrumbs */}
+
           <div className="breadcrumbs-wrap">
             <Link to="/">Home</Link>
             <ChevronRight size={14} />
@@ -133,7 +135,7 @@ const MovieDetails = () => {
           </div>
 
           <div className="details-grid">
-            {/* Poster Card */}
+
             <div className="details-poster-card">
               <img 
                 src={movie.poster} 
@@ -152,9 +154,8 @@ const MovieDetails = () => {
               </button>
             </div>
 
-            {/* Movie Info */}
             <div className="details-info-pane">
-              {/* Badges */}
+
               <div className="details-badges">
                 <span className="badge badge-primary">{movie.certificate || movie.certification || 'U/A'}</span>
                 {movie.formats?.map((fmt, i) => (
@@ -167,10 +168,8 @@ const MovieDetails = () => {
                 )}
               </div>
 
-              {/* Title */}
               <h1 className="details-title">{movie.title}</h1>
 
-              {/* Meta Row */}
               <div className="details-meta-row">
                 <div className="details-rating-badge">
                   <Star size={18} fill="#F59E0B" color="#F59E0B" />
@@ -194,7 +193,6 @@ const MovieDetails = () => {
                 </div>
               </div>
 
-              {/* Languages & Formats */}
               <div className="details-specs-row">
                 <div className="spec-item">
                   <span className="spec-label">Languages:</span>
@@ -210,7 +208,6 @@ const MovieDetails = () => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="details-actions-bar">
                 <button 
                   type="button" 
@@ -241,7 +238,6 @@ const MovieDetails = () => {
                 </button>
               </div>
 
-              {/* Synopsis */}
               <div className="details-synopsis-section">
                 <h3 className="section-subtitle">Synopsis</h3>
                 <p className="details-synopsis-text">{synopsisText}</p>
@@ -251,7 +247,6 @@ const MovieDetails = () => {
         </div>
       </div>
 
-      {/* Cast & Crew Section */}
       <div className="container details-bottom-sections">
         <section className="cast-section">
           <div className="section-title-wrap" style={{ marginBottom: '1.5rem' }}>
@@ -274,7 +269,6 @@ const MovieDetails = () => {
           </div>
         </section>
 
-        {/* Quick Multiplex Availability Preview */}
         <section className="available-screens-preview">
           <div className="section-title-wrap" style={{ marginBottom: '1.5rem' }}>
             <span className="section-tagline">NOW SHOWING AT</span>
@@ -301,7 +295,6 @@ const MovieDetails = () => {
         </section>
       </div>
 
-      {/* Trailer Modal Demo */}
       {isTrailerOpen && (
         <div className="trailer-modal-backdrop" onClick={() => setIsTrailerOpen(false)}>
           <div className="trailer-modal-content" onClick={(e) => e.stopPropagation()}>

@@ -4,11 +4,6 @@ dotenv.config();
 import mongoose from 'mongoose';
 import User from '../models/User.js';
 
-/**
- * Secure Admin Bootstrap CLI Script
- * Promotes an existing registered user to the ADMIN role.
- * Usage: node src/scripts/bootstrapAdmin.js <email>
- */
 const bootstrapAdmin = async () => {
   const targetEmail = process.argv[2];
 

@@ -2,11 +2,6 @@ import mongoose from 'mongoose';
 import Theatre from '../models/Theatre.js';
 import Screen from '../models/Screen.js';
 
-/**
- * @desc    Get all theatres with optional filters & pagination
- * @route   GET /api/theatres
- * @access  Public
- */
 export const getTheatres = async (req, res, next) => {
   try {
     const { city, search, partnerTier, page = 1, limit = 20 } = req.query;
@@ -59,11 +54,6 @@ export const getTheatres = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Get single theatre by ID or slug
- * @route   GET /api/theatres/:id
- * @access  Public
- */
 export const getTheatreById = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -91,11 +81,6 @@ export const getTheatreById = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Get all screens of a specific theatre
- * @route   GET /api/theatres/:id/screens
- * @access  Public
- */
 export const getTheatreScreens = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -116,7 +101,7 @@ export const getTheatreScreens = async (req, res, next) => {
 
     const screens = await Screen.find({ theatre: theatre._id, isActive: true })
       .sort({ screenNumber: 1 })
-      .select('-seats'); // exclude huge seat layout in summary, provide totalSeats
+      .select('-seats'); 
 
     res.status(200).json({
       success: true,
@@ -134,11 +119,6 @@ export const getTheatreScreens = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Create a new theatre
- * @route   POST /api/theatres
- * @access  Private (ADMIN)
- */
 export const createTheatre = async (req, res, next) => {
   try {
     const {
@@ -202,11 +182,6 @@ export const createTheatre = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Update a theatre
- * @route   PUT /api/theatres/:id
- * @access  Private (ADMIN)
- */
 export const updateTheatre = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -263,11 +238,6 @@ export const updateTheatre = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Delete a theatre (Soft delete by setting isActive=false, or full delete)
- * @route   DELETE /api/theatres/:id
- * @access  Private (ADMIN)
- */
 export const deleteTheatre = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -299,11 +269,6 @@ export const deleteTheatre = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Create a screen for a theatre
- * @route   POST /api/theatres/:id/screens
- * @access  Private (ADMIN)
- */
 export const createScreen = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -359,11 +324,6 @@ export const createScreen = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Update a screen
- * @route   PUT /api/screens/:id
- * @access  Private (ADMIN)
- */
 export const updateScreen = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -407,11 +367,6 @@ export const updateScreen = async (req, res, next) => {
   }
 };
 
-/**
- * @desc    Delete / deactivate a screen
- * @route   DELETE /api/screens/:id
- * @access  Private (ADMIN)
- */
 export const deleteScreen = async (req, res, next) => {
   try {
     const { id } = req.params;

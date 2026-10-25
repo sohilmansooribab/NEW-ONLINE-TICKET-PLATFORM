@@ -1,11 +1,10 @@
-/* Select Seats Styles — Premium White Theme */
+
 .select-seats-root {
   min-height: 100vh;
   padding-bottom: 5rem;
   background-color: #FFFFFF;
 }
 
-/* Top Bar */
 .seats-top-bar {
   background-color: #FFFFFF;
   border-bottom: 1px solid var(--border);
@@ -66,7 +65,6 @@
   color: var(--primary);
 }
 
-/* Main Layout */
 .seats-main-layout {
   padding-top: 2.5rem;
   display: grid;
@@ -75,7 +73,6 @@
   align-items: flex-start;
 }
 
-/* Auditorium Container */
 .seats-auditorium-container {
   background-color: #FFFFFF;
   border: 1px solid var(--border);
@@ -87,7 +84,6 @@
   box-shadow: var(--shadow-card);
 }
 
-/* Curved Screen Indicator */
 .cinema-screen-wrap {
   width: 85%;
   max-width: 600px;
@@ -122,7 +118,6 @@
   margin-top: 0.75rem;
 }
 
-/* Seat Grid Scroll Box */
 .seat-grid-scroll-box {
   width: 100%;
   overflow-x: auto;
@@ -187,7 +182,6 @@
   width: 22px;
 }
 
-/* Seat Item Buttons (Light & Crisp) */
 .seat-item {
   width: 28px;
   height: 28px;
@@ -203,7 +197,6 @@
   user-select: none;
 }
 
-/* Available States */
 .seat-item.available {
   background-color: #FFFFFF;
   border: 1px solid #D1D5DB;
@@ -219,7 +212,6 @@
   box-shadow: 0 2px 6px rgba(230, 57, 70, 0.2);
 }
 
-/* Selected State */
 .seat-item.selected {
   background-color: var(--primary);
   border: 1px solid var(--primary);
@@ -228,7 +220,6 @@
   transform: scale(1.08);
 }
 
-/* Occupied State */
 .seat-item.occupied {
   background-color: #F3F4F6;
   border: 1px solid #E5E7EB;
@@ -246,7 +237,6 @@
   pointer-events: none;
 }
 
-/* Legend Bar */
 .seats-legend-bar {
   display: flex;
   align-items: center;
@@ -303,7 +293,6 @@
 .tier-dot.premium { background-color: var(--accent-blue); }
 .tier-dot.classic { background-color: var(--text-secondary); }
 
-/* Sidebar Summary */
 .seats-summary-sidebar {
   position: sticky;
   top: calc(var(--nav-height) + 80px);
@@ -358,7 +347,6 @@
   margin: 1.25rem 0;
 }
 
-/* Selected Seats Block */
 .selected-seats-block {
   display: flex;
   flex-direction: column;
@@ -417,7 +405,6 @@
   font-weight: 700;
 }
 
-/* Pricing Breakdown */
 .pricing-breakdown-list {
   display: flex;
   flex-direction: column;

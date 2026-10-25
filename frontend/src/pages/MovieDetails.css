@@ -1,4 +1,4 @@
-/* Movie Details Styles — Premium White Theme */
+
 .movie-details-root {
   min-height: 100vh;
   padding-bottom: 5rem;
@@ -71,7 +71,6 @@
   color: var(--primary);
 }
 
-/* Details Grid */
 .details-grid {
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -126,7 +125,6 @@
   justify-content: center;
 }
 
-/* Info Pane */
 .details-info-pane {
   display: flex;
   flex-direction: column;
@@ -258,7 +256,6 @@
   max-width: 720px;
 }
 
-/* Cast Section */
 .details-bottom-sections {
   padding-top: 3.5rem;
   display: flex;
@@ -309,7 +306,6 @@
   color: var(--text-secondary);
 }
 
-/* Theatres Quick List */
 .theatres-quick-list {
   display: flex;
   flex-direction: column;
@@ -346,7 +342,6 @@
   color: var(--text-secondary);
 }
 
-/* Trailer Modal */
 .trailer-modal-backdrop {
   position: fixed;
   inset: 0;

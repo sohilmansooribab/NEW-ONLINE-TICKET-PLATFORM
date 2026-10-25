@@ -1,10 +1,9 @@
-/* Home Page Styles — Premium White Theme & Trend Discovery */
+
 .home-root {
   min-height: 100vh;
   background-color: #FFFFFF;
 }
 
-/* Data Transparency Pill */
 .data-transparency-pill {
   display: flex;
   align-items: center;
@@ -49,7 +48,6 @@
   flex-shrink: 0;
 }
 
-/* Events Section */
 .events-showcase-section {
   background-color: #FFFFFF;
   border-bottom: 1px solid var(--border);
@@ -89,7 +87,6 @@
   width: max-content;
 }
 
-/* Promo Banner Card */
 .promo-banner-wrapper {
   margin: 3.5rem auto;
 }
@@ -188,13 +185,11 @@
   filter: drop-shadow(0 6px 12px rgba(230, 57, 70, 0.2));
 }
 
-/* Genre Browse Section */
 .genre-browse-section {
   background-color: #FFFFFF;
   border-bottom: 1px solid var(--border);
 }
 
-/* Home Category Filters */
 .home-category-filters-wrap {
   margin-bottom: 1.25rem;
 }
@@ -238,7 +233,6 @@
   box-shadow: 0 2px 6px rgba(230, 57, 70, 0.25);
 }
 
-/* Theatres Showcase Section */
 .city-experience-section {
   background-color: var(--bg-secondary);
   border-bottom: 1px solid var(--border);
@@ -350,7 +344,6 @@
   width: 100%;
 }
 
-/* Features Strip Grid */
 .features-strip-section {
   background-color: #FFFFFF;
 }

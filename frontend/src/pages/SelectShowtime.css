@@ -1,11 +1,10 @@
-/* Select Showtime Styles — Premium White Theme */
+
 .select-showtime-root {
   min-height: 100vh;
   padding-bottom: 5rem;
   background-color: #FFFFFF;
 }
 
-/* Movie Bar */
 .showtime-movie-bar {
   background-color: #FFFFFF;
   border-bottom: 1px solid var(--border);
@@ -57,7 +56,6 @@
   color: var(--text-secondary);
 }
 
-/* Date Selector */
 .showtime-main {
   padding-top: 2rem;
 }
@@ -122,7 +120,6 @@
   font-weight: 500;
 }
 
-/* Filters Bar */
 .showtime-filters-bar {
   display: flex;
   align-items: center;
@@ -195,7 +192,6 @@
 .dot-fast { background-color: #D97706; }
 .dot-full { background-color: #DC2626; }
 
-/* Theatres List Container */
 .theatres-list-container {
   display: flex;
   flex-direction: column;
@@ -279,7 +275,6 @@
   border: 1px solid var(--border) !important;
 }
 
-/* Screens & Showtimes */
 .theatre-screens-wrap {
   display: flex;
   flex-direction: column;

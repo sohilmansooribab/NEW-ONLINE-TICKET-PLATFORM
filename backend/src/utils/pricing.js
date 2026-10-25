@@ -1,8 +1,4 @@
-/**
- * Authoritative Backend Price Calculation for CineBook
- * Computes prices directly from Showtime tierPricing and Screen seat layout.
- * Completely ignores any client-supplied totals or manipulated prices.
- */
+
 export const calculateAuthoritativePricing = (showtime, screen, seatIds, promoCode = null) => {
   if (!Array.isArray(seatIds) || seatIds.length === 0) {
     throw new Error('At least one seat identifier is required for price calculation');
@@ -48,10 +44,8 @@ export const calculateAuthoritativePricing = (showtime, screen, seatIds, promoCo
     });
   }
 
-  // Convenience fee: 12% of base total (matching CineBook frontend specification)
   const convenienceFee = Math.round(baseAmount * 0.12);
 
-  // Authoritative promo validation (e.g. CINEPASS20 -> 20% discount capped at ₹150)
   let discountAmount = 0;
   if (promoCode && typeof promoCode === 'string') {
     const normalizedCode = promoCode.trim().toUpperCase();

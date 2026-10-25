@@ -28,8 +28,8 @@ import './Dashboard.css';
 
 const AdminDashboard = () => {
   const { currentUser, showToast } = useBooking();
-  const [activeTab, setActiveTab] = useState('theatres'); // 'theatres' | 'users' | 'movies' | 'bookings'
-  
+  const [activeTab, setActiveTab] = useState('theatres'); 
+
   const [analytics, setAnalytics] = useState(null);
   const [theatresList, setTheatresList] = useState([]);
   const [usersList, setUsersList] = useState([]);
@@ -39,10 +39,8 @@ const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
 
-  // Guard: Only ADMIN role can access
   const isAdmin = currentUser?.role?.toUpperCase() === 'ADMIN';
 
-  // Load all admin data
   const loadAdminData = useCallback(async () => {
     if (!isAdmin) return;
     setIsLoading(true);
@@ -83,7 +81,6 @@ const AdminDashboard = () => {
     loadAdminData();
   }, [loadAdminData]);
 
-  // Promote / Demote user role
   const handleUpdateRole = async (userId, targetRole) => {
     setActionLoading(userId);
     try {
@@ -97,7 +94,6 @@ const AdminDashboard = () => {
     }
   };
 
-  // Delete user account
   const handleDeleteUser = async (userId, userName) => {
     if (!window.confirm(`Are you sure you want to delete user account '${userName}'?`)) return;
     setActionLoading(userId);
@@ -112,7 +108,6 @@ const AdminDashboard = () => {
     }
   };
 
-  // Assign organizer to theatre
   const handleAssignOrganizer = async (theatreId, organizerId) => {
     try {
       await adminApi.assignTheatreOrganizer(theatreId, organizerId);
@@ -123,7 +118,6 @@ const AdminDashboard = () => {
     }
   };
 
-  // Unauthorized Access Screen
   if (!isAdmin) {
     return (
       <div className="dashboard-root" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
@@ -151,7 +145,6 @@ const AdminDashboard = () => {
     );
   }
 
-  // Fallback stats if API analytics is loading
   const statsRevenue = analytics?.totalSettledRevenue ?? ADMIN_STATS.totalPlatformRevenue;
   const statsBookings = analytics?.totalBookings ?? ADMIN_STATS.totalBookingsMonth;
   const statsUsers = analytics?.totalUsers ?? ADMIN_STATS.totalRegisteredUsers;
@@ -159,7 +152,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="dashboard-root">
-      {/* Sidebar */}
+
       <aside className="dashboard-sidebar admin-sidebar">
         <div className="sidebar-brand-pane">
           <span className="sidebar-brand-name">CineBook Admin</span>
@@ -208,9 +201,8 @@ const AdminDashboard = () => {
         </div>
       </aside>
 
-      {/* Main Admin Area */}
       <main className="dashboard-main-area">
-        {/* Top Header */}
+
         <header className="dashboard-topbar">
           <div>
             <h1 className="dash-title">Platform Administration</h1>
@@ -220,7 +212,6 @@ const AdminDashboard = () => {
           </div>
         </header>
 
-        {/* Global Platform Stat Cards */}
         <section className="stats-grid">
           <div className="stat-card">
             <div className="stat-icon-wrap" style={{ backgroundColor: 'rgba(230, 57, 70, 0.12)', color: '#E63946' }}>
@@ -267,7 +258,6 @@ const AdminDashboard = () => {
           </div>
         </section>
 
-        {/* Data Tables */}
         <section className="dashboard-section-box">
           <div className="table-controls-header">
             <div className="table-tab-buttons">
@@ -291,7 +281,8 @@ const AdminDashboard = () => {
               </button>
               <button
                 className={`table-tab ${activeTab === 'movies' ? 'active' : ''}`}
-                onClick={() => setActiveTab('movies')}
+
+                onClick={() => setActiveTab('movie')}
               >
                 Movie Catalog ({moviesList.length > 0 ? moviesList.length : MOVIES.length})
               </button>
@@ -309,7 +300,6 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          {/* 1. Theatres Table */}
           {activeTab === 'theatres' && (
             <div className="table-wrapper">
               <table className="dash-table">
@@ -355,7 +345,6 @@ const AdminDashboard = () => {
             </div>
           )}
 
-          {/* 2. Users Table with Live Role Management */}
           {activeTab === 'users' && (
             <div className="table-wrapper">
               <table className="dash-table">
@@ -426,7 +415,6 @@ const AdminDashboard = () => {
             </div>
           )}
 
-          {/* 3. Bookings Audit Table */}
           {activeTab === 'bookings' && (
             <div className="table-wrapper">
               <table className="dash-table">
@@ -476,7 +464,6 @@ const AdminDashboard = () => {
             </div>
           )}
 
-          {/* 4. Movies Catalog Table */}
           {activeTab === 'movies' && (
             <div className="table-wrapper">
               <table className="dash-table">
